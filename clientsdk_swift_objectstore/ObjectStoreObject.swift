@@ -29,7 +29,7 @@ public class ObjectStoreObject{
 		self.container = container
 	}
 	
-	public func load(shouldCache:Bool, completionHandler:(error: ObjectStoreError?, data:NSData?)->Void){
+	public func load(shouldCache shouldCache:Bool, completionHandler:(error: ObjectStoreError?, data:NSData?)->Void){
 		logger.info("Loading object")
 		container.objectStore.requestManager.get(url: self.url) { (error, data, response) in
 			if let error = error {
