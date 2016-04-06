@@ -77,7 +77,7 @@ The BMSObjectStore SDK was designed to be as stateless and lightweight as possib
 
 Use `ObjectStore` instance to connect to IBM Object Store service and manage containers.
 
-#### Connect to the IBM Object Store using userId and password
+#### Connect to the IBM Object Store service using userId and password
 
 ```swift
 let objStore = ObjectStore(projectId:"your-project-id")
@@ -92,7 +92,7 @@ objStore.connect(	userId: "your-service-userId",
 }
 ```
 
-#### Connect to the IBM Object Store using authToken
+#### Connect to the IBM Object Store service using authToken
 
 ```swift
 let objStore = ObjectStore(projectId:"your-project-id")
@@ -206,7 +206,7 @@ container.deleteObject(name: "object-name") { (error) in
 }
 ```
 
-#### Delete container
+#### Delete the container
 
 ```swift
 container.delete { (error) in
@@ -222,7 +222,7 @@ container.delete { (error) in
 
 Use `ObjectStoreObjects` instance to load object content. 
 
-#### Loading objects content
+#### Loading object's content
 
 ```swift
 object.load(shouldCache: false) { (error, data) in
@@ -237,7 +237,7 @@ object.load(shouldCache: false) { (error, data) in
 }
 ```
 
-#### Getting cached objects content
+#### Getting cached object's content
 
 ```
 object.load(shouldCache: true) { (error, data) in ...... }
@@ -246,7 +246,7 @@ let imageView = UIImageView(image: UIImage(data: object.cachedData!))
 self.view.addSubview(imageView)
 ```
 
-#### Delete object
+#### Delete the object
 
 ```swift
 object.delete { (error) in
