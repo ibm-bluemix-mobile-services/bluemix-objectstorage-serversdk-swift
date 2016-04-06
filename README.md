@@ -3,12 +3,12 @@
 
 ## Content
 
-This repository contains the Swift SDK for [IBM Object Store service on Bluemix](https://console.ng.bluemix.net/docs/services/ObjectStorage/index.html). 
+This repository contains the Swift SDK for [IBM Object Store service on Bluemix](https://console.ng.bluemix.net/docs/services/ObjectStorage/index.html). The SDK is currently in early development stages and available for iOS, OSX and Linux platforms.
 
 ## Installation
 
-BMSObjectStore is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add `pod 'BMSObjectStore'` to your Podfile:
+#### Cocoapods
+To install BMSObjectStore using Cocoapods dependency manager add `pod 'BMSObjectStore'` to your Podfile:
 
 ```ruby
 use_frameworks!
@@ -17,6 +17,22 @@ target 'your-target' do
 	pod 'BMSObjectStore'
 end
 ```
+
+#### Swift package manager
+To install BMSObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file 
+
+```Swift
+import PackageDescription
+
+let package = Package(
+    name: "HelloSwift",
+	dependencies: [
+        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-objectstore.git", majorVersion: 0)
+	]
+)
+```
+
+
 
 ## API reference
 
