@@ -42,7 +42,12 @@ internal class AuthorizationRequestBody {
 	
 	func data() -> NSData {
 		do {
-			return try NSJSONSerialization.dataWithJSONObject(dict, options: NSJSONWritingOptions.PrettyPrinted)
+			#if swift(>=3)
+				return try NSJSONSerialization.data(withJSONObject: dict, options: NSJSONWritingOptions.prettyPrinted)
+			#else
+				return try NSJSONSerialization.dataWithJSONObject(dict, options: NSJSONWritingOptions.PrettyPrinted)
+			#endif
+			
 		} catch {
 			return NSData()
 		}

@@ -90,7 +90,12 @@ public class ObjectStoreContainer{
 				self.logger.info("Retrieved objects list")
 				var objectsList = [ObjectStoreObject]()
 				let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-				let objectNames = responseData.componentsSeparatedByString("\n")
+				
+				#if swift(>=3)
+					let objectNames = responseData.componentsSeparated(by: "\n")
+				#else
+					let objectNames = responseData.componentsSeparatedByString("\n")
+				#endif
 				for objectName:String in objectNames{
 					if objectName.characters.count == 0 {
 						continue

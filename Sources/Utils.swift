@@ -15,7 +15,11 @@ import Foundation
 
 internal class Utils{
 	static func urlPathEncode(text:String) -> String{
-		return text.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet()) as String!
+		#if swift(>=3)
+			return text.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed())!
+		#else
+			return text.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet()) as String!
+		#endif
 	}
 	
 	static func generateObjectUrl(baseUrl baseUrl:String, objectName:String) -> String{

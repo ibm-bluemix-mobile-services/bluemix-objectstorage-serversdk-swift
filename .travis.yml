@@ -1,8 +1,11 @@
+# .travis.yml
+# osx_image: xcode7.3
+language: generic
+
 # whitelist
 branches:
   only:
     development
-
 
 install:
     echo hello world

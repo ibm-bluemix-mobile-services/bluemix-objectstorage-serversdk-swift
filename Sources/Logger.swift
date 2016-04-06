@@ -16,7 +16,11 @@ import Foundation
 internal class Logger{
 	
 	let name:String;
+	#if swift(>=3)
+	let enabled:Boolean
+	#else
 	let enabled:BooleanType
+	#endif
 	private static let LEVEL_INF = "INF";
 	private static let LEVEL_ERR = "ERR";
 	private static let LEVEL_DBG = "DBG";

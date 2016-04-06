@@ -40,10 +40,10 @@ public class ObjectStore {
 		self.projectId = projectId
 		logger = Logger(name:"ObjectStore [\(self.projectId)]")
 
-		#if os(iOS)
-			self.requestManager = NSURLRequestManager()
+		#if swift(>=3)
+			self.requestManager = Swift3RequestManager()
 		#else
-			logger.error("UNSUPPORTED OS")
+			self.requestManager = NSURLRequestManager()
 		#endif
 	}
 	
@@ -70,7 +70,6 @@ public class ObjectStore {
 				// TODO: handle expiration
 				// let body = AuthorizationResponseBody(data:data!).json
 				// let expirationTimestamp = body["token"]["expires_at"].stringValue
-
 			}
 		}
 	}
@@ -152,7 +151,12 @@ public class ObjectStore {
 				self.logger.info("Retrieved containers list")
 				var containersList = [ObjectStoreContainer]()
 				let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-				let containerNames = responseData.componentsSeparatedByString("\n")
+				#if swift(>=3)
+					let containerNames = responseData.componentsSeparated(by: "\n")
+				#else
+					let containerNames = responseData.componentsSeparatedByString("\n")
+				#endif
+
 				for containerName:String in containerNames{
 					if containerName.characters.count == 0 {
 						continue

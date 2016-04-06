@@ -5,7 +5,6 @@
 
 This repository contains the Swift SDK for [IBM Object Store service on Bluemix](https://console.ng.bluemix.net/docs/services/ObjectStorage/index.html). 
 
-
 ## Installation
 
 BMSObjectStore is available through [CocoaPods](http://cocoapods.org). To install

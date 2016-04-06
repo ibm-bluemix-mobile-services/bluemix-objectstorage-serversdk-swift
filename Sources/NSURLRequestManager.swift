@@ -13,9 +13,7 @@
 
 import Foundation
 
-/**
-NSURL based implementation of RequestManager protocol. Used as a default RequestManager in BMSObjectStore
-*/
+/// NSURL based implementation of RequestManager protocol. Used as a default RequestManager in BMSObjectStore
 internal class NSURLRequestManager: BaseRequestManager {
 	private let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
 	private let logger = Logger(name: "RequestManager")
@@ -75,8 +73,13 @@ internal class NSURLRequestManager: BaseRequestManager {
 	*/
 	private func sendRequest(url url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
 		
-		let request = NSMutableURLRequest(URL: NSURL(string: url)!)
-		request.HTTPMethod = method
+		#if swift(>=3)
+			let request = NSMutableURLRequest(url: NSURL(string: url)!)
+			request.httpMethod = method
+		#else
+			let request = NSMutableURLRequest(URL: NSURL(string: url)!)
+			request.HTTPMethod = method
+		#endif
 		if let contentType = contentType{
 			request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 		}
@@ -118,11 +121,19 @@ internal class NSURLRequestManager: BaseRequestManager {
 			}
 		}
 		
-		if (data == nil){
-			defaultSession.dataTaskWithRequest(request, completionHandler: networkTaskCompletionHandler).resume();
-		} else {
-			defaultSession.uploadTaskWithRequest(request, fromData: data, completionHandler: networkTaskCompletionHandler).resume();
-		}
+		#if swift(>=3)
+			if (data == nil){
+				defaultSession.dataTask(with: request, completionHandler: networkTaskCompletionHandler).resume();
+			} else {
+				defaultSession.uploadTask(with: request, from: data, completionHandler: networkTaskCompletionHandler).resume();
+			}
+		#else
+			if (data == nil){
+				defaultSession.dataTaskWithRequest(request, completionHandler: networkTaskCompletionHandler).resume();
+			} else {
+				defaultSession.uploadTaskWithRequest(request, fromData: data, completionHandler: networkTaskCompletionHandler).resume();
+			}
+		#endif
 	}
 	
 }
