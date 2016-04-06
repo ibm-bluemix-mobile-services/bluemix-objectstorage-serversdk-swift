@@ -29,12 +29,21 @@
 		3A1BEBB01CB5C4D400289102 /* ObjectStoreObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B711CB5A62F001E4BE5 /* ObjectStoreObject.swift */; };
 		3A1BEBB11CB5C4D700289102 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B721CB5A62F001E4BE5 /* Utils.swift */; };
 		3A1BEBB21CB5C4D900289102 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B5A1CB5A390001E4BE5 /* Logger.swift */; };
-		3A1BEBBA1CB5C50300289102 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BEBB91CB5C50300289102 /* main.swift */; };
-		3AE4A6F91CB5CC1B00EFB064 /* BMSObjectStoreOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A1BEBA11CB5C4BB00289102 /* BMSObjectStoreOSX.framework */; };
+		3AE4A8601CB5CFED00DECC25 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE4A85F1CB5CFED00DECC25 /* main.swift */; };
+		3AE4A8641CB5D05200DECC25 /* ObjectStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B6E1CB5A62F001E4BE5 /* ObjectStore.swift */; };
+		3AE4A8651CB5D05400DECC25 /* ObjectStoreContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B6F1CB5A62F001E4BE5 /* ObjectStoreContainer.swift */; };
+		3AE4A8661CB5D05600DECC25 /* ObjectStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B701CB5A62F001E4BE5 /* ObjectStoreError.swift */; };
+		3AE4A8671CB5D05800DECC25 /* ObjectStoreObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B711CB5A62F001E4BE5 /* ObjectStoreObject.swift */; };
+		3AE4A8681CB5D05B00DECC25 /* Swift3RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD902E1CB5B00B006D0E8E /* Swift3RequestManager.swift */; };
+		3AE4A8691CB5D05D00DECC25 /* BaseRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B6C1CB5A62F001E4BE5 /* BaseRequestManager.swift */; };
+		3AE4A86A1CB5D06000DECC25 /* NSURLRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B6D1CB5A62F001E4BE5 /* NSURLRequestManager.swift */; };
+		3AE4A86B1CB5D06200DECC25 /* AuthorizationRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B6B1CB5A62F001E4BE5 /* AuthorizationRequestBody.swift */; };
+		3AE4A86C1CB5D06500DECC25 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B721CB5A62F001E4BE5 /* Utils.swift */; };
+		3AE4A86D1CB5D06700DECC25 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD1B5A1CB5A390001E4BE5 /* Logger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		3A1BEBB51CB5C50300289102 /* CopyFiles */ = {
+		3AE4A85B1CB5CFED00DECC25 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -52,10 +61,7 @@
 		3A1BEBA11CB5C4BB00289102 /* BMSObjectStoreOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSObjectStoreOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A1BEBA31CB5C4BB00289102 /* BMSObjectStoreOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BMSObjectStoreOSX.h; sourceTree = "<group>"; };
 		3A1BEBA51CB5C4BB00289102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3A1BEBB71CB5C50300289102 /* TestApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestApp; sourceTree = BUILT_PRODUCTS_DIR; };
-		3A1BEBB91CB5C50300289102 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3ADD1B5A1CB5A390001E4BE5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = ../../Sources/Logger.swift; sourceTree = "<group>"; };
-		3ADD1B691CB5A438001E4BE5 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = ../../Sources/main.swift; sourceTree = "<group>"; };
 		3ADD1B6B1CB5A62F001E4BE5 /* AuthorizationRequestBody.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationRequestBody.swift; path = ../../Sources/AuthorizationRequestBody.swift; sourceTree = "<group>"; };
 		3ADD1B6C1CB5A62F001E4BE5 /* BaseRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BaseRequestManager.swift; path = ../../Sources/BaseRequestManager.swift; sourceTree = "<group>"; };
 		3ADD1B6D1CB5A62F001E4BE5 /* NSURLRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSURLRequestManager.swift; path = ../../Sources/NSURLRequestManager.swift; sourceTree = "<group>"; };
@@ -65,6 +71,8 @@
 		3ADD1B711CB5A62F001E4BE5 /* ObjectStoreObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ObjectStoreObject.swift; path = ../../Sources/ObjectStoreObject.swift; sourceTree = "<group>"; };
 		3ADD1B721CB5A62F001E4BE5 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = ../../Sources/Utils.swift; sourceTree = "<group>"; };
 		3ADD902E1CB5B00B006D0E8E /* Swift3RequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Swift3RequestManager.swift; path = ../../Sources/Swift3RequestManager.swift; sourceTree = "<group>"; };
+		3AE4A85D1CB5CFED00DECC25 /* TestApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestApp; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AE4A85F1CB5CFED00DECC25 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,11 +90,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3A1BEBB41CB5C50300289102 /* Frameworks */ = {
+		3AE4A85A1CB5CFED00DECC25 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3AE4A6F91CB5CC1B00EFB064 /* BMSObjectStoreOSX.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,21 +118,13 @@
 			path = BMSObjectStoreOSX;
 			sourceTree = "<group>";
 		};
-		3A1BEBB81CB5C50300289102 /* TestApp */ = {
-			isa = PBXGroup;
-			children = (
-				3A1BEBB91CB5C50300289102 /* main.swift */,
-			);
-			path = TestApp;
-			sourceTree = "<group>";
-		};
 		3A53DA1A1CB59F5D00538BE0 = {
 			isa = PBXGroup;
 			children = (
 				3ADD1B621CB5A3E4001E4BE5 /* BMSObjectStore */,
 				3A1BEB881CB5BA5600289102 /* BMSObjectStoreIOS */,
 				3A1BEBA21CB5C4BB00289102 /* BMSObjectStoreOSX */,
-				3A1BEBB81CB5C50300289102 /* TestApp */,
+				3AE4A85E1CB5CFED00DECC25 /* TestApp */,
 				3ADD1B611CB5A3E4001E4BE5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -135,7 +134,7 @@
 			children = (
 				3A1BEB871CB5BA5600289102 /* BMSObjectStoreIOS.framework */,
 				3A1BEBA11CB5C4BB00289102 /* BMSObjectStoreOSX.framework */,
-				3A1BEBB71CB5C50300289102 /* TestApp */,
+				3AE4A85D1CB5CFED00DECC25 /* TestApp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,7 +146,6 @@
 				3ADD90261CB5AD24006D0E8E /* Network stack */,
 				3ADD90251CB5AD17006D0E8E /* Object Store API */,
 				3ADD90271CB5AD2C006D0E8E /* Utils */,
-				3ADD1B691CB5A438001E4BE5 /* main.swift */,
 			);
 			path = BMSObjectStore;
 			sourceTree = "<group>";
@@ -188,6 +186,14 @@
 				3ADD1B5A1CB5A390001E4BE5 /* Logger.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		3AE4A85E1CB5CFED00DECC25 /* TestApp */ = {
+			isa = PBXGroup;
+			children = (
+				3AE4A85F1CB5CFED00DECC25 /* main.swift */,
+			);
+			path = TestApp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,13 +254,13 @@
 			productReference = 3A1BEBA11CB5C4BB00289102 /* BMSObjectStoreOSX.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		3A1BEBB61CB5C50300289102 /* TestApp */ = {
+		3AE4A85C1CB5CFED00DECC25 /* TestApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3A1BEBBB1CB5C50300289102 /* Build configuration list for PBXNativeTarget "TestApp" */;
+			buildConfigurationList = 3AE4A8611CB5CFED00DECC25 /* Build configuration list for PBXNativeTarget "TestApp" */;
 			buildPhases = (
-				3A1BEBB31CB5C50300289102 /* Sources */,
-				3A1BEBB41CB5C50300289102 /* Frameworks */,
-				3A1BEBB51CB5C50300289102 /* CopyFiles */,
+				3AE4A8591CB5CFED00DECC25 /* Sources */,
+				3AE4A85A1CB5CFED00DECC25 /* Frameworks */,
+				3AE4A85B1CB5CFED00DECC25 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -262,7 +268,7 @@
 			);
 			name = TestApp;
 			productName = TestApp;
-			productReference = 3A1BEBB71CB5C50300289102 /* TestApp */;
+			productReference = 3AE4A85D1CB5CFED00DECC25 /* TestApp */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -280,7 +286,7 @@
 					3A1BEBA01CB5C4BB00289102 = {
 						CreatedOnToolsVersion = 7.3;
 					};
-					3A1BEBB61CB5C50300289102 = {
+					3AE4A85C1CB5CFED00DECC25 = {
 						CreatedOnToolsVersion = 7.3;
 					};
 				};
@@ -299,7 +305,7 @@
 			targets = (
 				3A1BEB861CB5BA5600289102 /* BMSObjectStoreIOS */,
 				3A1BEBA01CB5C4BB00289102 /* BMSObjectStoreOSX */,
-				3A1BEBB61CB5C50300289102 /* TestApp */,
+				3AE4A85C1CB5CFED00DECC25 /* TestApp */,
 			);
 		};
 /* End PBXProject section */
@@ -356,11 +362,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3A1BEBB31CB5C50300289102 /* Sources */ = {
+		3AE4A8591CB5CFED00DECC25 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A1BEBBA1CB5C50300289102 /* main.swift in Sources */,
+				3AE4A86B1CB5D06200DECC25 /* AuthorizationRequestBody.swift in Sources */,
+				3AE4A86D1CB5D06700DECC25 /* Logger.swift in Sources */,
+				3AE4A8651CB5D05400DECC25 /* ObjectStoreContainer.swift in Sources */,
+				3AE4A8681CB5D05B00DECC25 /* Swift3RequestManager.swift in Sources */,
+				3AE4A8641CB5D05200DECC25 /* ObjectStore.swift in Sources */,
+				3AE4A8601CB5CFED00DECC25 /* main.swift in Sources */,
+				3AE4A86C1CB5D06500DECC25 /* Utils.swift in Sources */,
+				3AE4A86A1CB5D06000DECC25 /* NSURLRequestManager.swift in Sources */,
+				3AE4A8661CB5D05600DECC25 /* ObjectStoreError.swift in Sources */,
+				3AE4A8691CB5D05D00DECC25 /* BaseRequestManager.swift in Sources */,
+				3AE4A8671CB5D05800DECC25 /* ObjectStoreObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,7 +610,19 @@
 			};
 			name = Release;
 		};
-		3A1BEBBC1CB5C50300289102 /* Debug */ = {
+		3A53DA1F1CB59F5D00538BE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		3A53DA201CB59F5D00538BE0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		3AE4A8621CB5CFED00DECC25 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -615,7 +643,6 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -641,7 +668,7 @@
 			};
 			name = Debug;
 		};
-		3A1BEBBD1CB5C50300289102 /* Release */ = {
+		3AE4A8631CB5CFED00DECC25 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -662,7 +689,6 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -677,18 +703,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3A53DA1F1CB59F5D00538BE0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		3A53DA201CB59F5D00538BE0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
 			};
 			name = Release;
 		};
@@ -713,15 +727,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3A1BEBBB1CB5C50300289102 /* Build configuration list for PBXNativeTarget "TestApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3A1BEBBC1CB5C50300289102 /* Debug */,
-				3A1BEBBD1CB5C50300289102 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		3A53DA1E1CB59F5D00538BE0 /* Build configuration list for PBXProject "BMSObjectStore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -730,6 +735,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3AE4A8611CB5CFED00DECC25 /* Build configuration list for PBXNativeTarget "TestApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AE4A8621CB5CFED00DECC25 /* Debug */,
+				3AE4A8631CB5CFED00DECC25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

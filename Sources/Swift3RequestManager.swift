@@ -70,7 +70,7 @@ class Swift3RequestManager: BaseRequestManager{
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
 	private func sendRequest(url url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
-		
+		logger.info("sending request")
 	}
 
 
