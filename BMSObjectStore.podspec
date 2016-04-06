@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BMSObjectStore"
-  s.version          = "0.0.2"
+  s.version          = "0.0.3"
   s.summary          = "Swift SDK for IBM Object Store service on Bluemix"
 
   s.description      = <<-DESC
