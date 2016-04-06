@@ -3,7 +3,7 @@
 
 ## Content
 
-This repository contains the Swift SDK for IBM Object Store service on Bluemix. 
+This repository contains the Swift SDK for [IBM Object Store service on Bluemix](https://console.ng.bluemix.net/docs/services/ObjectStorage/index.html). 
 
 
 ## Installation
@@ -21,51 +21,7 @@ end
 
 ## API reference
 
-```swift
-class ObjectStore {
-    static let REGION_DALLAS
-    static let REGION_LONDON
-    init(projectId:String)
-    func connect(userId userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){}
-	func connect(authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){}
-	func createContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){}
-	func retrieveContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?)->Void){}
-	func retrieveContainersList(completionHandler:(error: ObjectStoreError?, containers: [ObjectStoreContainer]?) -> Void){}
-    func deleteContainer(name:String, completionHandler:(error: ObjectStoreError?) -> Void)
-}
-```
-
-```swift
-class ObjectStoreContainer{
-    let name
-    let url
-    init(name:String, url:String, objectStore:ObjectStore)
-   	func storeObject(name:String, data:NSData, completionHandler:(error: ObjectStoreError?, object: ObjectStoreObject?)->Void){}
-   	func retrieveObject(name:String, completionHandler:(error: ObjectStoreError?, object: ObjectStoreObject?)->Void) {}
-    func retrieveObjectsList(completionHandler:(error: ObjectStoreError?, objects: [ObjectStoreObject]?) -> Void){}
-    func deleteObject(name:String, completionHandler:(error: ObjectStoreError?) -> Void){}
-    func delete(completionHandler:(error:ObjectStoreError?)->Void){}
-}
-```
-
-```swift
-class ObjectStoreObject{
-    let name
-    let url
-    var cachedData:NSData
-    func load(shouldCache:Bool, completionHandler:(error: ObjectStoreError?, data:NSData?)->Void){}
-    func delete(completionHandler:(error:ObjectStoreError?)->Void){}
-}
-```
-
-```swift
-enum ObjectStoreError: ErrorType {
-	case ConnectionFailure(message:String)
-	case AuthenticationError
-	case ServerError
-	case NotFound
-}
-```
+API docs are automatically generated from source code and available using this link - [http://cocoadocs.org/docsets/BMSObjectStore](http://cocoadocs.org/docsets/BMSObjectStore)
 
 ## Usage
 

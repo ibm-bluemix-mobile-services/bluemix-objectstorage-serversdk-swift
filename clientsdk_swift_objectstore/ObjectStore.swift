@@ -13,10 +13,15 @@
 
 import Foundation
 
+/// Use ObjectStore instance to connect to IBM Object Store service and manage containers
 public class ObjectStore {
 	
 	private static let TOKEN_ENDPOINT = "https://identity.open.softlayer.com/v3/auth/tokens"
+	
+	/// Use this value in .connect(...)  methods to connect to Dallas instance of IBM Object Store
 	public static let REGION_DALLAS = "https://dal.objectstorage.open.softlayer.com/v1/AUTH_"
+
+	/// Use this value in .connect(...)  methods to connect to London instance of IBM Object Store
 	public static let REGION_LONDON = "https://lon.objectstorage.open.softlayer.com/v1/AUTH_"
 
 	internal static let X_SUBJECT_TOKEN = "X-Subject-Token"
@@ -25,14 +30,31 @@ public class ObjectStore {
 	internal var projectId:String! = ""
 	internal var projectEndpoint:String! = ""
 	internal let requestManager:BaseRequestManager!
-	let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
 
-	public init(projectId:String, requestManager:BaseRequestManager? = NSURLRequestManager()){
+	/**
+	Initialize ObjectStore by supplying projectId and optionally requestManager
+	
+	- Parameter projectId: ProjectId provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
+	*/
+	public init(projectId:String){
 		self.projectId = projectId
-		self.requestManager = requestManager
 		logger = Logger(name:"ObjectStore [\(self.projectId)]")
+
+		#if os(iOS)
+			self.requestManager = NSURLRequestManager()
+		#else
+			logger.error("UNSUPPORTED OS")
+		#endif
 	}
 	
+	/**
+	Connect to the IBM Object Store service using userId and password. Note that username and password are considered sensitive credentials and should only be accessible by trusted applications. If possible avoid exposing your IBM Object Store credentials directly to the mobile app and use authorization token instead.
+	
+	- Parameter userId: UserId provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
+	- Parameter password: Password provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
+	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
+	- Parameter completionHandler: Closure to be executed once connection is established
+	*/
 	public func connect(userId userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
 		logger.info("Connecting to IBM ObjectStore")
 		let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
@@ -53,6 +75,13 @@ public class ObjectStore {
 		}
 	}
 	
+	/**
+	Connect to the IBM Object Store service using authorization token. Authorization token allows to connecto to IBM Object Store without exposing user credentials to client application. This is a recommended connection mode.
+	
+	- Parameter authToken: The authorization token received from Open Stack identity service. See IBM Object Store documentation to learn how to obtain authorization token
+	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
+	- Parameter completionHandler: Closure to be executed once connection is established
+	*/
 	public func connect(authToken authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
 		logger.info("Connecting to IBM ObjectStore")
 		self.requestManager.authToken = authToken
@@ -69,6 +98,12 @@ public class ObjectStore {
 		}
 	}
 	
+	/**
+	Create a new container
+	
+	- Parameter name: The name of container to be created
+	- Parameter completionHandler: Closure to be executed once container is created.
+	*/
 	public func createContainer(name name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
 		logger.info("Creating container [\(name)]")
 		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
@@ -84,6 +119,12 @@ public class ObjectStore {
 		}
 	}
 
+	/**
+	Retrieve an existing container
+	
+	- Parameter name: The name of container to retrieve
+	- Parameter completionHandler: Closure to be executed once container is retrieved.
+	*/
 	public func retrieveContainer(name name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?)->Void) {
 		logger.info("Retrieving container [\(name)]")
 		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
@@ -97,6 +138,11 @@ public class ObjectStore {
 		}
 	}
 	
+	/**
+	Retrieve a list of existing containers
+	
+	- Parameter completionHandler: Closure to be executed once list of containeds is retrieved.
+	*/
 	public func retrieveContainersList(completionHandler completionHandler:(error: ObjectStoreError?, containers: [ObjectStoreContainer]?) -> Void){
 		logger.info("Retrieving containers list")
 		requestManager.get(url: projectEndpoint) { (error, data, response) in
@@ -119,6 +165,12 @@ public class ObjectStore {
 		}
 	}
 	
+	/**
+	Delete an existing container
+	
+	- Parameter name: The name of container to delete
+	- Parameter completionHandler: Closure to be executed once container is deleted.
+	*/
 	public func deleteContainer(name name:String, completionHandler:(error: ObjectStoreError?) -> Void){
 		logger.info("Deleting container [\(name)]")
 		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)

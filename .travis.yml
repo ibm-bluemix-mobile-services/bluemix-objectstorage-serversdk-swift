@@ -1,2 +1,8 @@
+# whitelist
+branches:
+  only:
+    development
+
+
 install:
     echo hello world

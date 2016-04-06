@@ -13,10 +13,23 @@
 
 import Foundation
 
+///	Used to indicate various failure types that might occur during BMSObjectStore operations
 public enum ObjectStoreError: ErrorType {
-	case ConnectionFailure(message:String)
-	case AuthenticationError
-	case ServerError
+	
+	/**
+		Indicates a failure during connection attempt. Since response and data is not available in this case an error message might be provided
+	
+		- Parameter message: An optional description of failure reason
+	*/
+	case ConnectionFailure(message:String?)
+	
+	/// Indicates a resource not being available on server. Returned in case of HTTP 404 status
 	case NotFound
+	
+	/// Indicates a missing authorization or authentication failure. Returned in case of HTTP 401 status
 	case Unauthorized
+
+	/// Indicates an error reported by server. Retruned in cases of HTTP 4xx and 5xx statuses which are not handled separately
+	case ServerError
+	
 }
