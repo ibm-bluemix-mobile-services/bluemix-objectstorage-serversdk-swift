@@ -15,15 +15,15 @@ import Foundation
 
 /// Use ObjectStore instance to connect to IBM Object Store service and manage containers
 public class ObjectStore {
-	
+
 	private static let TOKEN_ENDPOINT = "https://identity.open.softlayer.com/v3/auth/tokens"
 	
 	/// Use this value in .connect(...)  methods to connect to Dallas instance of IBM Object Store
 	public static let REGION_DALLAS = "https://dal.objectstorage.open.softlayer.com/v1/AUTH_"
-
+	
 	/// Use this value in .connect(...)  methods to connect to London instance of IBM Object Store
 	public static let REGION_LONDON = "https://lon.objectstorage.open.softlayer.com/v1/AUTH_"
-
+	
 	internal static let X_SUBJECT_TOKEN = "X-Subject-Token"
 	private let logger:Logger
 

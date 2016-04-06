@@ -13,13 +13,13 @@
 
 import Foundation
 
-internal class Logger{
+public class Logger{
 	
 	let name:String;
 	#if swift(>=3)
-	let enabled:Boolean
+	public let enabled:Boolean
 	#else
-	let enabled:BooleanType
+	public let enabled:BooleanType
 	#endif
 	private static let LEVEL_INF = "INF";
 	private static let LEVEL_ERR = "ERR";
