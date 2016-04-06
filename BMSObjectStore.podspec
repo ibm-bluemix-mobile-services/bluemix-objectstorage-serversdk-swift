@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-objectstore"
   s.license          = 'Apache-2.0'
   s.author           = { "Anton Aleksandrov" => "antona@us.ibm.com" }
-  s.source           = { :git => "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-objectstore.git" }
+  s.source           = { :git => "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-objectstore.git", :tag => "v#{s.version}" }
   
   s.platform     = :ios, '8.0'
   s.requires_arc = true
