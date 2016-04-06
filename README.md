@@ -9,18 +9,22 @@ This repository contains the Swift SDK for IBM Object Store service on Bluemix.
 ## Installation
 
 BMSObjectStore is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+it, simply add `pod 'BMSObjectStore'` to your Podfile:
 
 ```ruby
-pod "BMSObjectStore"
+use_frameworks!
+
+target 'your-target' do
+	pod 'BMSObjectStore'
+end
 ```
 
 ## API reference
 
 ```swift
 class ObjectStore {
-    static REGION_DALLAS
-    static REGION_LONDON
+    static let REGION_DALLAS
+    static let REGION_LONDON
     init(projectId:String)
     func connect(userId userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){}
 	func connect(authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){}
@@ -33,8 +37,8 @@ class ObjectStore {
 
 ```swift
 class ObjectStoreContainer{
-    name
-    url
+    let name
+    let url
     init(name:String, url:String, objectStore:ObjectStore)
    	func storeObject(name:String, data:NSData, completionHandler:(error: ObjectStoreError?, object: ObjectStoreObject?)->Void){}
    	func retrieveObject(name:String, completionHandler:(error: ObjectStoreError?, object: ObjectStoreObject?)->Void) {}
@@ -71,7 +75,7 @@ Import the BMSObjectStore framework to the classes you want to use it in
 import BMSObjectStore
 ```
 
-The BMSObjectStore SDK was designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of ObjectStoreObject as described below. 
+The BMSObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below. 
 
 ### ObjectStore 
 
@@ -158,7 +162,7 @@ objStore.deleteContainer(name: "container-name") { (error) in
 
 Use `ObjectStoreContainer` instance to manage objects inside of particular container
 
-#### Create a new object
+#### Create a new object or update an existing one
 
 ```swift
 let str = "Hello World!"
@@ -222,7 +226,7 @@ container.delete { (error) in
 
 Use `ObjectStoreObjects` instance to load object content. 
 
-#### Loading object's content
+#### Load the object content
 
 ```swift
 object.load(shouldCache: false) { (error, data) in
@@ -237,7 +241,7 @@ object.load(shouldCache: false) { (error, data) in
 }
 ```
 
-#### Getting cached object's content
+#### Get cached object content
 
 ```
 object.load(shouldCache: true) { (error, data) in ...... }
