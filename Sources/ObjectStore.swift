@@ -39,12 +39,7 @@ public class ObjectStore {
 	public init(projectId:String){
 		self.projectId = projectId
 		logger = Logger(name:"ObjectStore [\(self.projectId)]")
-
-		#if swift(>=3)
-			self.requestManager = Swift3RequestManager()
-		#else
-			self.requestManager = NSURLRequestManager()
-		#endif
+		self.requestManager = NSURLRequestManager()
 	}
 	
 	/**
