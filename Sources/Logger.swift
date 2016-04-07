@@ -13,12 +13,16 @@
 
 import Foundation
 
+/// BluemixObjectStore internal logging infrastructure
 public class Logger{
 	
 	let name:String;
+	
 	#if swift(>=3)
+	/// Use to enable or disable BluemixObjectStore internal logging output
 	public static let enabled:Boolean = true
 	#else
+	/// Use to enable or disable BluemixObjectStore internal logging output
 	public static let enabled:BooleanType = true
 	#endif
 	private static let LEVEL_INF = "INF";
