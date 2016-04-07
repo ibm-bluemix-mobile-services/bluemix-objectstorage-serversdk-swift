@@ -29,8 +29,8 @@
 		3A9078A61CB70E3B00A58BA5 /* ObjectStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9078A41CB70E3B00A58BA5 /* ObjectStore.swift */; };
 		3A9078A91CB70E6800A58BA5 /* AuthorizationRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9078A81CB70E6800A58BA5 /* AuthorizationRequestBody.swift */; };
 		3A9078AA1CB70E6800A58BA5 /* AuthorizationRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9078A81CB70E6800A58BA5 /* AuthorizationRequestBody.swift */; };
-		3A9078AE1CB70EBE00A58BA5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9078AB1CB70E9300A58BA5 /* main.swift */; };
 		3A9078AF1CB70F3200A58BA5 /* BluemixObjectStoreOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A9078741CB707A700A58BA5 /* BluemixObjectStoreOSX.framework */; };
+		3A9078B11CB713E700A58BA5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9078B01CB713E700A58BA5 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -63,7 +63,7 @@
 		3A90789C1CB70E2B00A58BA5 /* ObjectStoreObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ObjectStoreObject.swift; path = ../Sources/ObjectStoreObject.swift; sourceTree = "<group>"; };
 		3A9078A41CB70E3B00A58BA5 /* ObjectStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ObjectStore.swift; path = ../Sources/ObjectStore.swift; sourceTree = "<group>"; };
 		3A9078A81CB70E6800A58BA5 /* AuthorizationRequestBody.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationRequestBody.swift; path = ../Sources/AuthorizationRequestBody.swift; sourceTree = "<group>"; };
-		3A9078AB1CB70E9300A58BA5 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = ../../Sources/main.swift; sourceTree = "<group>"; };
+		3A9078B01CB713E700A58BA5 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,7 +119,7 @@
 		3A071F301CB7076A0061DFFE /* TestAppOSX */ = {
 			isa = PBXGroup;
 			children = (
-				3A9078AB1CB70E9300A58BA5 /* main.swift */,
+				3A9078B01CB713E700A58BA5 /* main.swift */,
 			);
 			name = TestAppOSX;
 			path = BluemixObjectStore;
@@ -318,7 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A9078AE1CB70EBE00A58BA5 /* main.swift in Sources */,
+				3A9078B11CB713E700A58BA5 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,13 +444,18 @@
 		3A071F361CB7076A0061DFFE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		3A071F371CB7076A0061DFFE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -515,7 +520,7 @@
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = BluemixObjectStoreIOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.bluemix.objectstore.BluemixObjectStoreIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -541,7 +546,7 @@
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = BluemixObjectStoreIOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.bluemix.objectstore.BluemixObjectStoreIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -13,10 +13,7 @@
 
 import Foundation
 
-#if swift(>=3)
-#else
 import BluemixObjectStoreOSX
-#endif
 
 print ("Hello1")
 
