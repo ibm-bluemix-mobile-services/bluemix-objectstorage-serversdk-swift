@@ -15,20 +15,20 @@ import Foundation
 class Swift3RequestManager: BaseRequestManager{
 	private let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
 	private let logger = Logger(name: "Swift3RequestManager")
-	
+
 	/**
 	Send a GET request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
 	override func get(url url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
 		logger.error("get Not implemented")
 	}
-	
+
 	/**
 	Send a PUT request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter contentType: The value of a 'Content-Type' header
 	- Parameter data: The data to send in request body
@@ -37,20 +37,20 @@ class Swift3RequestManager: BaseRequestManager{
 	override func put(url url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
 		logger.error("put Not implemented")
 	}
-	
+
 	/**
 	Send a DELETE request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
 	override func delete(url url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
 		logger.error("delete Not implemented")
 	}
-	
+
 	/**
 	Send a POST request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter contentType: The value of a 'Content-Type' header
 	- Parameter data: The data to send in request body
@@ -59,10 +59,10 @@ class Swift3RequestManager: BaseRequestManager{
 	override func post(url url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
 		sendRequest(url: url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
 	}
-	
+
 	/**
 	Send a request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter method: The HTTP method to use
 	- Parameter contentType: The value of a 'Content-Type' header

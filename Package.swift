@@ -1,8 +1,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "BMSObjectStore",
+    name: "BluemixObjectStore",
 	dependencies: [
-		//.Package(url: "https://github.com/IBM-Swift/Kitura-net.git", majorVersion: 0)
 	]
 )

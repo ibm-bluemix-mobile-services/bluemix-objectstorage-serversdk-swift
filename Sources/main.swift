@@ -1,25 +1,35 @@
-//
-//  main.swift
-//  TestApp
-//
-//  Created by Anton Aleksandrov on 4/6/16.
-//
-//
+/*
+*     Copyright 2016 IBM Corp.
+*     Licensed under the Apache License, Version 2.0 (the "License");
+*     you may not use this file except in compliance with the License.
+*     You may obtain a copy of the License at
+*     http://www.apache.org/licenses/LICENSE-2.0
+*     Unless required by applicable law or agreed to in writing, software
+*     distributed under the License is distributed on an "AS IS" BASIS,
+*     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*     See the License for the specific language governing permissions and
+*     limitations under the License.
+*/
 
 import Foundation
+
+#if swift(>=3)
+#else
+import BluemixObjectStoreOSX
+#endif
 
 print ("Hello1")
 
 class Tester{
-	let projectId = ""
-	let userId = ""
-	let password = ""
+	let projectId = "012689c20a5b4e5e9f9e5c4f363cd39d"
+	let userId = "beb8c3848a5b411293f3503a53d92bea"
+	let password = "G(7o40/NyWcCX,=C"
 	let containerName = "FileContainer"
 	let objectName = "hello.txt"
 	let region = ObjectStore.REGION_DALLAS
 	
 	func run(){
-		let objStore = ObjectStore(projectId: "")
+		let objStore = ObjectStore(projectId: projectId)
 		objStore.connect(userId: userId, password: password, region: region) { (error) in
 			if let error = error {
 				print("connect failure \(error)")
@@ -66,7 +76,7 @@ class Tester{
 
 Tester().run();
 #if swift(>=3)
-NSRunLoop.current().run()
+	NSRunLoop.current().run()
 #else
-NSRunLoop.currentRunLoop().run()
+	NSRunLoop.currentRunLoop().run()
 #endif
