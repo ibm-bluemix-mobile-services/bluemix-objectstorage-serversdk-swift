@@ -1,4 +1,4 @@
-# BMSObjectStore
+# BluemixObjectStore
 
 
 ## Content
@@ -8,18 +8,18 @@ This repository contains the Swift SDK for [IBM Object Store service on Bluemix]
 ## Installation
 
 #### Cocoapods
-To install BMSObjectStore using Cocoapods dependency manager add `pod 'BMSObjectStore'` to your Podfile:
+To install BluemixObjectStore using Cocoapods dependency manager add `pod 'BluemixObjectStore'` to your Podfile:
 
 ```ruby
 use_frameworks!
 
 target 'your-target' do
-	pod 'BMSObjectStore'
+	pod 'BluemixObjectStore'
 end
 ```
 
 #### Swift package manager
-To install BMSObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file 
+To install BluemixObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file 
 
 ```Swift
 import PackageDescription
@@ -36,17 +36,17 @@ let package = Package(
 
 ## API reference
 
-API docs are automatically generated from source code and available using this link - [http://cocoadocs.org/docsets/BMSObjectStore](http://cocoadocs.org/docsets/BMSObjectStore)
+API docs are automatically generated from source code and available using this link - [http://cocoadocs.org/docsets/BluemixObjectStore](http://cocoadocs.org/docsets/BluemixObjectStore)
 
 ## Usage
 
-Import the BMSObjectStore framework to the classes you want to use it in
+Import the BluemixObjectStore framework to the classes you want to use it in
 
 ```ruby
-import BMSObjectStore
+import BluemixObjectStore
 ```
 
-The BMSObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below. 
+The BluemixObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below. 
 
 ### ObjectStore 
 
