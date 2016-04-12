@@ -11,14 +11,12 @@
  *     limitations under the License.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 
-//! Project version number for BluemixObjectStoreOSX.
-FOUNDATION_EXPORT double BluemixObjectStoreOSXVersionNumber;
+//! Project version number for BluemixObjectStoreIOS.
+FOUNDATION_EXPORT double BluemixObjectStoreIOSVersionNumber;
 
-//! Project version string for BluemixObjectStoreOSX.
-FOUNDATION_EXPORT const unsigned char BluemixObjectStoreOSXVersionString[];
+//! Project version string for BluemixObjectStoreIOS.
+FOUNDATION_EXPORT const unsigned char BluemixObjectStoreIOSVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <BluemixObjectStoreOSX/PublicHeader.h>
-
-
+// In this header, you should import all the public headers of your framework using statements like #import <BluemixObjectStoreIOS/PublicHeader.h>

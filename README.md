@@ -19,7 +19,7 @@ end
 ```
 
 #### Swift package manager
-To install BMSObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file 
+To install BMSObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file
 
 ```Swift
 import PackageDescription
@@ -46,9 +46,9 @@ Import the BMSObjectStore framework to the classes you want to use it in
 import BMSObjectStore
 ```
 
-The BMSObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below. 
+The BMSObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below.
 
-### ObjectStore 
+### ObjectStore
 
 Use `ObjectStore` instance to connect to IBM Object Store service and manage containers.
 
@@ -71,7 +71,7 @@ objStore.connect(	userId: "your-service-userId",
 
 ```swift
 let objStore = ObjectStore(projectId:"your-project-id")
-objStore.connect(	authToken: "your-auth-token", 
+objStore.connect(	authToken: "your-auth-token",
 					region: ObjectStore.REGION_DALLAS) { (error) in
 	if let error = error {
 		print("connect error :: \(error)")
@@ -195,7 +195,7 @@ container.delete { (error) in
 
 ### ObjectStoreObject
 
-Use `ObjectStoreObjects` instance to load object content. 
+Use `ObjectStoreObjects` instance to load object content.
 
 #### Load the object content
 
