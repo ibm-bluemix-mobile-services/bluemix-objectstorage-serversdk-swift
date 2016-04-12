@@ -11,10 +11,12 @@
  *     limitations under the License.
  */
 
-import PackageDescription
+#import <UIKit/UIKit.h>
 
-let package = Package(
-    name: "BluemixObjectStore",
-	dependencies: [
-	]
-)
+//! Project version number for BluemixObjectStoreIOS.
+FOUNDATION_EXPORT double BluemixObjectStoreIOSVersionNumber;
+
+//! Project version string for BluemixObjectStoreIOS.
+FOUNDATION_EXPORT const unsigned char BluemixObjectStoreIOSVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <BluemixObjectStoreIOS/PublicHeader.h>

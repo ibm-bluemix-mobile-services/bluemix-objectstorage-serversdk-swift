@@ -11,10 +11,12 @@
  *     limitations under the License.
  */
 
-import PackageDescription
+#import <Cocoa/Cocoa.h>
 
-let package = Package(
-    name: "BluemixObjectStore",
-	dependencies: [
-	]
-)
+//! Project version number for BluemixObjectStoreOSX.
+FOUNDATION_EXPORT double BluemixObjectStoreOSXVersionNumber;
+
+//! Project version string for BluemixObjectStoreOSX.
+FOUNDATION_EXPORT const unsigned char BluemixObjectStoreOSXVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <BluemixObjectStoreOSX/PublicHeader.h>
