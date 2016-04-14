@@ -24,8 +24,12 @@ internal class NSURLRequestManager: BaseRequestManager {
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	override func get(url url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		sendRequest(url: url, method: "GET", completionHandler: completionHandler)
+	override func get(url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "GET", completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "GET", completionHandler: completionHandler)
+		#endif
 	}
 	
 	/**
@@ -36,8 +40,12 @@ internal class NSURLRequestManager: BaseRequestManager {
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	override func put(url url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		sendRequest(url: url, method: "PUT", data: data, completionHandler: completionHandler)
+	override func put(url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "PUT", data: data, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "PUT", data: data, completionHandler: completionHandler)
+		#endif
 	}
 	
 	/**
@@ -46,8 +54,12 @@ internal class NSURLRequestManager: BaseRequestManager {
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	override func delete(url url:String, completionHandler:NetworkRequestCompletionHandler){
-		sendRequest(url: url, method: "DELETE", completionHandler: completionHandler)
+	override func delete(url:String, completionHandler:NetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "DELETE", completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "DELETE", completionHandler: completionHandler)
+		#endif
 	}
 	
 	/**
@@ -58,8 +70,12 @@ internal class NSURLRequestManager: BaseRequestManager {
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	override func post(url url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		sendRequest(url: url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
+	override func post(url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
+		#endif
 	}
 	
 	/**
@@ -71,8 +87,7 @@ internal class NSURLRequestManager: BaseRequestManager {
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	private func sendRequest(url url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
-		
+	private func sendRequest(url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
 		#if swift(>=3)
 			let request = NSMutableURLRequest(url: NSURL(string: url)!)
 			request.httpMethod = method
@@ -91,7 +106,11 @@ internal class NSURLRequestManager: BaseRequestManager {
 			(data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
 			
 			guard error == nil else {
-				self.logger.error(String(ObjectStoreError.ConnectionFailure(message: error!.description)))
+				#if swift(>=3)
+					self.logger.error(text: String(ObjectStoreError.ConnectionFailure(message: error!.description)))
+				#else
+					self.logger.error(String(ObjectStoreError.ConnectionFailure(message: error!.description)))
+				#endif
 				completionHandler(error:ObjectStoreError.ConnectionFailure(message: error!.description), data: nil, response: nil)
 				return
 			}
@@ -100,19 +119,35 @@ internal class NSURLRequestManager: BaseRequestManager {
 			
 			switch httpResponse.statusCode {
 			case 401:
-				self.logger.error(String(ObjectStoreError.Unauthorized))
-				self.logger.debug(httpResponse.description)
+				#if swift(>=3)
+					self.logger.error(text: String(ObjectStoreError.Unauthorized))
+					self.logger.debug(text: httpResponse.description)
+				#else
+					self.logger.error(String(ObjectStoreError.Unauthorized))
+					self.logger.debug(httpResponse.description)
+				#endif
 				completionHandler(error: ObjectStoreError.NotFound, data: data, response: httpResponse)
 				break
 			case 404:
-				self.logger.error(String(ObjectStoreError.NotFound))
-				self.logger.debug(httpResponse.description)
+				#if swift(>=3)
+					self.logger.error(text: String(ObjectStoreError.NotFound))
+					self.logger.debug(text: httpResponse.description)
+				#else
+					self.logger.error(String(ObjectStoreError.NotFound))
+					self.logger.debug(httpResponse.description)
+				#endif
 				completionHandler(error: ObjectStoreError.NotFound, data: data, response: httpResponse)
 				break
 			case 400 ... 599:
-				self.logger.error(String(ObjectStoreError.ServerError))
-				self.logger.debug(httpResponse.description)
-				self.logger.debug(String(data:data!, encoding:NSUTF8StringEncoding)!)
+				#if swift(>=3)
+					self.logger.error(text: String(ObjectStoreError.ServerError))
+					self.logger.debug(text: httpResponse.description)
+					self.logger.debug(text: String(data:data!, encoding:NSUTF8StringEncoding)!)
+				#else
+					self.logger.error(String(ObjectStoreError.ServerError))
+					self.logger.debug(httpResponse.description)
+					self.logger.debug(String(data:data!, encoding:NSUTF8StringEncoding)!)
+				#endif
 				completionHandler(error: ObjectStoreError.ServerError, data: data, response: httpResponse)
 				break
 			default:

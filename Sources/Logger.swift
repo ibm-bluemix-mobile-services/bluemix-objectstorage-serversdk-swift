@@ -35,20 +35,36 @@ public class Logger{
 	}
 	
 	internal func info(text:String){
-		printLog(text, level: Logger.LEVEL_INF)
+		#if swift(>=3)
+			printLog(text: text, level: Logger.LEVEL_INF)
+		#else
+			printLog(text, level: Logger.LEVEL_INF)
+		#endif
 	}
 	
 	internal func debug(text:String){
-		printLog(text, level: Logger.LEVEL_DBG)
+		#if swift(>=3)
+			printLog(text: text, level: Logger.LEVEL_DBG)
+		#else
+			printLog(text, level: Logger.LEVEL_DBG)
+		#endif
 	}
 	
 	internal func warn(text:String){
-		printLog(text, level: Logger.LEVEL_WRN)
+		#if swift(>=3)
+			printLog(text: text, level: Logger.LEVEL_WRN)
+		#else
+			printLog(text, level: Logger.LEVEL_WRN)
+		#endif
 	}
 	
 
 	internal func error(text:String){
-		printLog(text, level: Logger.LEVEL_ERR)
+		#if swift(>=3)
+			printLog(text: text, level: Logger.LEVEL_ERR)
+		#else
+			printLog(text, level: Logger.LEVEL_ERR)
+		#endif
 	}
 	
 	private func printLog(text:String, level:String){

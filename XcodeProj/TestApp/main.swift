@@ -29,7 +29,7 @@ class Tester{
 				print("connect failure \(error)")
 			} else {
 				print("connect success")
-				self.getContainer(objStore)
+				self.getContainer(objStore: objStore)
 			}
 		}
 	}
@@ -40,7 +40,7 @@ class Tester{
 				print("retrieveContainer failure \(error)")
 			} else {
 				print("retrieveContainer success")
-				self.getObject(container!)
+				self.getObject(objContainer: container!)
 			}
 		})
 
@@ -52,12 +52,12 @@ class Tester{
 				print("getObject failure \(error)")
 			} else {
 				print("getObject success")
-				self.loadObject(object!)
+				self.load(object: object!)
 			}
 		}
 	}
 
-	func loadObject(object:ObjectStoreObject){
+	func load(object:ObjectStoreObject){
 		object.load(shouldCache: false) { (error, data) in
 			if let error = error {
 				print("loadObject failure \(error)")

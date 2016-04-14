@@ -22,8 +22,17 @@ internal class Utils{
 		#endif
 	}
 	
-	static func generateObjectUrl(baseUrl baseUrl:String, objectName:String) -> String{
-		return baseUrl + "/" + Utils.urlPathEncode(objectName)
+	static func generateObjectUrl(baseUrl:String, objectName:String) -> String{
+		#if swift(>=3)
+			return baseUrl + "/" + Utils.urlPathEncode(text: objectName)
+		#else
+			return baseUrl + "/" + Utils.urlPathEncode(objectName)
+		#endif
 	}
-
 }
+
+/*
+#if swift(>=3)
+#else
+#endif
+*/

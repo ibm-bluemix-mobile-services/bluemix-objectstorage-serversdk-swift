@@ -50,23 +50,41 @@ public class ObjectStore {
 	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
-	public func connect(userId userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
-		logger.info("Connecting to IBM ObjectStore")
-		let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-		requestManager.post(url: ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error)
-			} else {
-				self.logger.info("Connected to IBM ObjectStore")
-				self.requestManager.authToken = response!.allHeaderFields[ObjectStore.X_SUBJECT_TOKEN] as? String
-				self.projectEndpoint = region + self.projectId
-				completionHandler(error: nil)
-				
-				// TODO: handle expiration
-				// let body = AuthorizationResponseBody(data:data!).json
-				// let expirationTimestamp = body["token"]["expires_at"].stringValue
+	public func connect(userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Connecting to IBM ObjectStore")
+			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
+			requestManager.post(url: ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error)
+				} else {
+					self.logger.info(text: "Connected to IBM ObjectStore")
+					self.requestManager.authToken = response!.allHeaderFields[ObjectStore.X_SUBJECT_TOKEN] as? String
+					self.projectEndpoint = region + self.projectId
+					completionHandler(error: nil)
+					
+				}
 			}
-		}
+		#else
+			logger.info("Connecting to IBM ObjectStore")
+			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
+			requestManager.post(ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error)
+				} else {
+					self.logger.info("Connected to IBM ObjectStore")
+					self.requestManager.authToken = response!.allHeaderFields[ObjectStore.X_SUBJECT_TOKEN] as? String
+					self.projectEndpoint = region + self.projectId
+					completionHandler(error: nil)
+					
+				}
+			}
+		#endif
+		
+		// TODO: handle expiration
+		// let body = AuthorizationResponseBody(data:data!).json
+		// let expirationTimestamp = body["token"]["expires_at"].stringValue
+
 	}
 	
 	/**
@@ -76,20 +94,36 @@ public class ObjectStore {
 	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
-	public func connect(authToken authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
-		logger.info("Connecting to IBM ObjectStore")
-		self.requestManager.authToken = authToken
-		let requestUrl = region + projectId
-		requestManager.get(url: requestUrl ) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error)
-			} else {
-				self.logger.info("Connected to IBM ObjectStore")
-				self.projectEndpoint = region + self.projectId
-				completionHandler(error: nil)
-			
+	public func connect(authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Connecting to IBM ObjectStore")
+			self.requestManager.authToken = authToken
+			let requestUrl = region + projectId
+			requestManager.get(url: requestUrl ) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error)
+				} else {
+					self.logger.info(text: "Connected to IBM ObjectStore")
+					self.projectEndpoint = region + self.projectId
+					completionHandler(error: nil)
+					
+				}
 			}
-		}
+		#else
+			logger.info("Connecting to IBM ObjectStore")
+			self.requestManager.authToken = authToken
+			let requestUrl = region + projectId
+			requestManager.get(requestUrl ) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error)
+				} else {
+					self.logger.info("Connected to IBM ObjectStore")
+					self.projectEndpoint = region + self.projectId
+					completionHandler(error: nil)
+					
+				}
+			}
+		#endif
 	}
 	
 	/**
@@ -98,19 +132,34 @@ public class ObjectStore {
 	- Parameter name: The name of container to be created
 	- Parameter completionHandler: Closure to be executed once container is created.
 	*/
-	public func createContainer(name name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
-		logger.info("Creating container [\(name)]")
-		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
-		requestManager.put(url: requestUrl) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error, container: nil)
-			} else {
-				// status 201 == create new container
-				// status 202 == updated existing container
-				self.logger.info("Created container [\(name)]")
-				completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+	public func createContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Creating container [\(name)]")
+			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+			requestManager.put(url: requestUrl) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, container: nil)
+				} else {
+					// status 201 == create new container
+					// status 202 == updated existing container
+					self.logger.info(text: "Created container [\(name)]")
+					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+				}
 			}
-		}
+		#else
+			logger.info("Creating container [\(name)]")
+			let requestUrl = Utils.generateObjectUrl(projectEndpoint, objectName: name)
+			requestManager.put(requestUrl) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, container: nil)
+				} else {
+					// status 201 == create new container
+					// status 202 == updated existing container
+					self.logger.info("Created container [\(name)]")
+					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+				}
+			}
+		#endif
 	}
 
 	/**
@@ -119,17 +168,30 @@ public class ObjectStore {
 	- Parameter name: The name of container to retrieve
 	- Parameter completionHandler: Closure to be executed once container is retrieved.
 	*/
-	public func retrieveContainer(name name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?)->Void) {
-		logger.info("Retrieving container [\(name)]")
-		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
-		requestManager.get(url: requestUrl) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error, container: nil)
-			} else {
-				self.logger.info("Retrieved container [\(name)]")
-				completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+	public func retrieveContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?)->Void) {
+		#if swift(>=3)
+			logger.info(text: "Retrieving container [\(name)]")
+			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+			requestManager.get(url: requestUrl) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, container: nil)
+				} else {
+					self.logger.info(text: "Retrieved container [\(name)]")
+					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+				}
 			}
-		}
+		#else
+			logger.info("Retrieving container [\(name)]")
+			let requestUrl = Utils.generateObjectUrl(projectEndpoint, objectName: name)
+			requestManager.get(requestUrl) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, container: nil)
+				} else {
+					self.logger.info("Retrieved container [\(name)]")
+					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+				}
+			}
+		#endif
 	}
 	
 	/**
@@ -137,31 +199,58 @@ public class ObjectStore {
 	
 	- Parameter completionHandler: Closure to be executed once list of containeds is retrieved.
 	*/
-	public func retrieveContainersList(completionHandler completionHandler:(error: ObjectStoreError?, containers: [ObjectStoreContainer]?) -> Void){
-		logger.info("Retrieving containers list")
-		requestManager.get(url: projectEndpoint) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error, containers: nil)
-			} else {
-				self.logger.info("Retrieved containers list")
-				var containersList = [ObjectStoreContainer]()
-				let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-				#if swift(>=3)
-					let containerNames = responseData.componentsSeparated(by: "\n")
-				#else
-					let containerNames = responseData.componentsSeparatedByString("\n")
-				#endif
-
-				for containerName:String in containerNames{
-					if containerName.characters.count == 0 {
-						continue
+	public func retrieveContainersList(completionHandler:(error: ObjectStoreError?, containers: [ObjectStoreContainer]?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Retrieving containers list")
+			requestManager.get(url: projectEndpoint) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, containers: nil)
+				} else {
+					self.logger.info(text: "Retrieved containers list")
+					var containersList = [ObjectStoreContainer]()
+					let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
+					#if swift(>=3)
+						let containerNames = responseData.components(separatedBy: "\n")
+					#else
+						let containerNames = responseData.componentsSeparatedByString("\n")
+					#endif
+					
+					for containerName:String in containerNames{
+						if containerName.characters.count == 0 {
+							continue
+						}
+						let containerUrl = Utils.generateObjectUrl(baseUrl: self.projectEndpoint, objectName: containerName)
+						containersList.append(ObjectStoreContainer(name:containerName, url: containerUrl, objectStore: self))
 					}
-					let containerUrl = Utils.generateObjectUrl(baseUrl: self.projectEndpoint, objectName: containerName)
-					containersList.append(ObjectStoreContainer(name:containerName, url: containerUrl, objectStore: self))
+					completionHandler(error: nil, containers: containersList)
 				}
-				completionHandler(error: nil, containers: containersList)
 			}
-		}
+		#else
+			logger.info("Retrieving containers list")
+			requestManager.get(projectEndpoint) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, containers: nil)
+				} else {
+					self.logger.info("Retrieved containers list")
+					var containersList = [ObjectStoreContainer]()
+					let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
+					#if swift(>=3)
+						let containerNames = responseData.components(separatedBy: "\n")
+					#else
+						let containerNames = responseData.componentsSeparatedByString("\n")
+					#endif
+					
+					for containerName:String in containerNames{
+						if containerName.characters.count == 0 {
+							continue
+						}
+						let containerUrl = Utils.generateObjectUrl(self.projectEndpoint, objectName: containerName)
+						containersList.append(ObjectStoreContainer(name:containerName, url: containerUrl, objectStore: self))
+					}
+					completionHandler(error: nil, containers: containersList)
+				}
+			}
+		#endif
 	}
 	
 	/**
@@ -170,16 +259,32 @@ public class ObjectStore {
 	- Parameter name: The name of container to delete
 	- Parameter completionHandler: Closure to be executed once container is deleted.
 	*/
-	public func deleteContainer(name name:String, completionHandler:(error: ObjectStoreError?) -> Void){
-		logger.info("Deleting container [\(name)]")
-		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
-		requestManager.delete(url: requestUrl) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error)
-			} else {
-				self.logger.info("Deleted container [\(name)]")
-				completionHandler(error: nil)
+	public func deleteContainer(name:String, completionHandler:(error: ObjectStoreError?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Deleting container [\(name)]")
+			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+			requestManager.delete(url: requestUrl) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error)
+				} else {
+					self.logger.info(text: "Deleted container [\(name)]")
+					completionHandler(error: nil)
+				}
 			}
-		}
+		#else
+			logger.info("Deleting container [\(name)]")
+			let requestUrl = Utils.generateObjectUrl(projectEndpoint, objectName: name)
+			requestManager.delete(requestUrl) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error)
+				} else {
+					self.logger.info("Deleted container [\(name)]")
+					completionHandler(error: nil)
+				}
+			}
+		#endif
 	}
 }
+#if swift(>=3)
+#else
+#endif

@@ -46,28 +46,48 @@ public class ObjectStoreObject{
 	- Parameter shouldCache: Defines whether object content loaded from IBM Object Store service will be cached by this ObjectStoreObject instance
 	- Parameter completionHandler: Closure to be executed once object is created
 	*/
-	public func load(shouldCache shouldCache:Bool, completionHandler:(error: ObjectStoreError?, data:NSData?)->Void){
-		logger.info("Loading object")
-		container.objectStore.requestManager.get(url: self.url) { (error, data, response) in
-			if let error = error {
-				completionHandler(error: error, data: nil)
-			} else {
-				self.logger.info("Loaded object")
-				if shouldCache {
-					self.cachedData = data
+	public func load(shouldCache:Bool, completionHandler:(error: ObjectStoreError?, data:NSData?)->Void){
+		#if swift(>=3)
+			logger.info(text: "Loading object")
+			container.objectStore.requestManager.get(url: self.url) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, data: nil)
+				} else {
+					self.logger.info(text: "Loaded object")
+					if shouldCache {
+						self.cachedData = data
+					}
+					completionHandler(error: nil, data:data)
 				}
-				completionHandler(error: nil, data:data)
 			}
-			
-		}
+		#else
+			logger.info("Loading object")
+			container.objectStore.requestManager.get(self.url) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, data: nil)
+				} else {
+					self.logger.info("Loaded object")
+					if shouldCache {
+						self.cachedData = data
+					}
+					completionHandler(error: nil, data:data)
+				}
+			}
+		#endif
 	}
 	
 	/**
 	Delete the object
 	*/
-	public func delete(completionHandler completionHandler:(error:ObjectStoreError?)->Void){
-		self.container.deleteObject(name: self.name, completionHandler: completionHandler)
+	public func delete(completionHandler:(error:ObjectStoreError?)->Void){
+		#if swift(>=3)
+			self.container.deleteObject(name: self.name, completionHandler: completionHandler)
+		#else
+			self.container.deleteObject(self.name, completionHandler: completionHandler)
+		#endif
 	}
-
-	
 }
+
+#if swift(>=3)
+#else
+#endif
