@@ -17,13 +17,13 @@ import Foundation
 public class ObjectStore {
 
 	private static let TOKEN_ENDPOINT = "https://identity.open.softlayer.com/v3/auth/tokens"
-	
+
 	/// Use this value in .connect(...)  methods to connect to Dallas instance of IBM Object Store
 	public static let REGION_DALLAS = "https://dal.objectstorage.open.softlayer.com/v1/AUTH_"
-	
+
 	/// Use this value in .connect(...)  methods to connect to London instance of IBM Object Store
 	public static let REGION_LONDON = "https://lon.objectstorage.open.softlayer.com/v1/AUTH_"
-	
+
 	internal static let X_SUBJECT_TOKEN = "X-Subject-Token"
 	private let logger:Logger
 
@@ -33,7 +33,7 @@ public class ObjectStore {
 
 	/**
 	Initialize ObjectStore by supplying projectId and optionally requestManager
-	
+
 	- Parameter projectId: ProjectId provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
 	*/
 	public init(projectId:String){
@@ -41,10 +41,10 @@ public class ObjectStore {
 		logger = Logger(name:"ObjectStore [\(self.projectId)]")
 		self.requestManager = NSURLRequestManager()
 	}
-	
+
 	/**
 	Connect to the IBM Object Store service using userId and password. Note that username and password are considered sensitive credentials and should only be accessible by trusted applications. If possible avoid exposing your IBM Object Store credentials directly to the mobile app and use authorization token instead.
-	
+
 	- Parameter userId: UserId provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
 	- Parameter password: Password provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
 	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
@@ -54,7 +54,8 @@ public class ObjectStore {
 		#if swift(>=3)
 			logger.info(text: "Connecting to IBM ObjectStore")
 			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-			requestManager.post(url: ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+			let headers = ["Content-Type": "application/json"]
+			requestManager.post(url: ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data()) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
 				} else {
@@ -62,13 +63,14 @@ public class ObjectStore {
 					self.requestManager.authToken = response!.allHeaderFields[ObjectStore.X_SUBJECT_TOKEN] as? String
 					self.projectEndpoint = region + self.projectId
 					completionHandler(error: nil)
-					
+
 				}
 			}
 		#else
 			logger.info("Connecting to IBM ObjectStore")
 			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-			requestManager.post(ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+			let headers = ["Content-Type": "application/json"]
+			requestManager.post(ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data()) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
 				} else {
@@ -76,20 +78,20 @@ public class ObjectStore {
 					self.requestManager.authToken = response!.allHeaderFields[ObjectStore.X_SUBJECT_TOKEN] as? String
 					self.projectEndpoint = region + self.projectId
 					completionHandler(error: nil)
-					
+
 				}
 			}
 		#endif
-		
+
 		// TODO: handle expiration
 		// let body = AuthorizationResponseBody(data:data!).json
 		// let expirationTimestamp = body["token"]["expires_at"].stringValue
 
 	}
-	
+
 	/**
 	Connect to the IBM Object Store service using authorization token. Authorization token allows to connecto to IBM Object Store without exposing user credentials to client application. This is a recommended connection mode.
-	
+
 	- Parameter authToken: The authorization token received from Open Stack identity service. See IBM Object Store documentation to learn how to obtain authorization token
 	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	- Parameter completionHandler: Closure to be executed once connection is established
@@ -106,7 +108,7 @@ public class ObjectStore {
 					self.logger.info(text: "Connected to IBM ObjectStore")
 					self.projectEndpoint = region + self.projectId
 					completionHandler(error: nil)
-					
+
 				}
 			}
 		#else
@@ -120,19 +122,19 @@ public class ObjectStore {
 					self.logger.info("Connected to IBM ObjectStore")
 					self.projectEndpoint = region + self.projectId
 					completionHandler(error: nil)
-					
+
 				}
 			}
 		#endif
 	}
-	
+
 	/**
 	Create a new container
-	
+
 	- Parameter name: The name of container to be created
 	- Parameter completionHandler: Closure to be executed once container is created.
 	*/
-	public func createContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
+	public func createContainer(name: String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
 		#if swift(>=3)
 			logger.info(text: "Creating container [\(name)]")
 			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
@@ -143,7 +145,7 @@ public class ObjectStore {
 					// status 201 == create new container
 					// status 202 == updated existing container
 					self.logger.info(text: "Created container [\(name)]")
-					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
 				}
 			}
 		#else
@@ -156,15 +158,83 @@ public class ObjectStore {
 					// status 201 == create new container
 					// status 202 == updated existing container
 					self.logger.info("Created container [\(name)]")
-					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
 				}
 			}
 		#endif
 	}
 
 	/**
+	 * Configures the specified container on the Object Storage service for web hosting.
+	 *
+	 * @param name The name for the container.
+	 * @param onSuccess Closure that should be invoked upon completion.
+	 */
+	public func configureContainerForWebHosting(name: String, completionHandler: (error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void) {
+		#if swift(>=3)
+			logger.info(text: "Configuring container [\(name)] for web hosting...")
+			let headers = ["X-Container-Meta-Web-Listings" : "true"]
+			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+			requestManager.post(url: requestUrl, headers: headers) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, container: nil)
+					return
+				}
+
+				guard let response = response else {
+					completionHandler(error: ObjectStoreError.ServerError, container: nil)
+					return
+				}
+
+				if response.statusCode == 204 {
+					self.logger.info(text: "Container [\(name)] successfully configured for web hosting.")
+					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
+				} else {
+					completionHandler(error: ObjectStoreError.ServerError, container: nil)
+				}
+			}
+		#else
+			//TODO: Implement logic for Swift 2
+		#endif
+ }
+
+ /**
+  * Configures the specified container on the Object Storage service for public access.
+  *
+  * @param name The name for the container.
+  * @param completionHandler Closure that should be invoked upon completion.
+  */
+ public func configureContainerForPublicAccess(name: String, completionHandler: (error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void) {
+	 #if swift(>=3)
+		 logger.info(text: "Configuring container [\(name)] for public access...")
+		 let headers = ["X-Container-Read" : ".r:*,.rlistings"]
+		 let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+		 requestManager.post(url: requestUrl, headers: headers) { (error, data, response) in
+			 if let error = error {
+				 completionHandler(error: error, container: nil)
+				 return
+			 }
+
+			 guard let response = response else {
+				 completionHandler(error: ObjectStoreError.ServerError, container: nil)
+				 return
+			 }
+
+			 if response.statusCode == 204 {
+				 self.logger.info(text: "Container [\(name)] successfully configured for public access.")
+				 completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
+			 } else {
+				 completionHandler(error: ObjectStoreError.ServerError, container: nil)
+			 }
+		 }
+	 #else
+		 //TODO: Implement logic for Swift 2
+	 #endif
+}
+
+	/**
 	Retrieve an existing container
-	
+
 	- Parameter name: The name of container to retrieve
 	- Parameter completionHandler: Closure to be executed once container is retrieved.
 	*/
@@ -193,10 +263,10 @@ public class ObjectStore {
 			}
 		#endif
 	}
-	
+
 	/**
 	Retrieve a list of existing containers
-	
+
 	- Parameter completionHandler: Closure to be executed once list of containeds is retrieved.
 	*/
 	public func retrieveContainersList(completionHandler:(error: ObjectStoreError?, containers: [ObjectStoreContainer]?) -> Void){
@@ -214,7 +284,7 @@ public class ObjectStore {
 					#else
 						let containerNames = responseData.componentsSeparatedByString("\n")
 					#endif
-					
+
 					for containerName:String in containerNames{
 						if containerName.characters.count == 0 {
 							continue
@@ -239,7 +309,7 @@ public class ObjectStore {
 					#else
 						let containerNames = responseData.componentsSeparatedByString("\n")
 					#endif
-					
+
 					for containerName:String in containerNames{
 						if containerName.characters.count == 0 {
 							continue
@@ -252,10 +322,10 @@ public class ObjectStore {
 			}
 		#endif
 	}
-	
+
 	/**
 	Delete an existing container
-	
+
 	- Parameter name: The name of container to delete
 	- Parameter completionHandler: Closure to be executed once container is deleted.
 	*/

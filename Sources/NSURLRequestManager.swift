@@ -20,7 +20,7 @@ internal class NSURLRequestManager: BaseRequestManager {
 
 	/**
 	Send a GET request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
@@ -31,26 +31,25 @@ internal class NSURLRequestManager: BaseRequestManager {
 			sendRequest(url, method: "GET", completionHandler: completionHandler)
 		#endif
 	}
-	
+
 	/**
 	Send a PUT request
-	
+
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	override func put(url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+	override func put(url:String, headers: [String:String]? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler) {
 		#if swift(>=3)
-			sendRequest(url: url, method: "PUT", data: data, completionHandler: completionHandler)
+			sendRequest(url: url, method: "PUT", headers: headers, data: data, completionHandler: completionHandler)
 		#else
-			sendRequest(url, method: "PUT", data: data, completionHandler: completionHandler)
+			sendRequest(url, method: "PUT", headers: headers, data: data, completionHandler: completionHandler)
 		#endif
 	}
-	
+
 	/**
 	Send a DELETE request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
@@ -61,33 +60,33 @@ internal class NSURLRequestManager: BaseRequestManager {
 			sendRequest(url, method: "DELETE", completionHandler: completionHandler)
 		#endif
 	}
-	
+
 	/**
 	Send a POST request
-	
+
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	override func post(url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+	override func post(url:String, headers: [String:String]? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
 		#if swift(>=3)
-			sendRequest(url: url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
+			sendRequest(url: url, method: "POST", headers: headers, data: data, completionHandler: completionHandler)
 		#else
-			sendRequest(url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
+			sendRequest(url, method: "POST", headers: headers, data: data, completionHandler: completionHandler)
 		#endif
 	}
-	
+
 	/**
 	Send a request
-	
+
 	- Parameter url: The URL to send request to
 	- Parameter method: The HTTP method to use
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	private func sendRequest(url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
+	private func sendRequest(url:String, method:String, headers: [String:String]? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler) {
 		#if swift(>=3)
 			let request = NSMutableURLRequest(url: NSURL(string: url)!)
 			request.httpMethod = method
@@ -95,16 +94,21 @@ internal class NSURLRequestManager: BaseRequestManager {
 			let request = NSMutableURLRequest(URL: NSURL(string: url)!)
 			request.HTTPMethod = method
 		#endif
-		if let contentType = contentType{
-			request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-		}
-		if let authToken = authToken{
+		
+		if let authToken = authToken {
 			request.setValue(authToken, forHTTPHeaderField: BaseRequestManager.X_AUTH_TOKEN)
 		}
-		
+
+		if let headers = headers {
+			for (name, value) in headers {
+				// Validate header name before setting it against a predefined list?
+				request.setValue(value, forHTTPHeaderField: name)
+			}
+		}
+
 		let networkTaskCompletionHandler = {
 			(data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
-			
+
 			guard error == nil else {
 				#if swift(>=3)
 					self.logger.error(text: String(ObjectStoreError.ConnectionFailure(message: error!.description)))
@@ -114,9 +118,9 @@ internal class NSURLRequestManager: BaseRequestManager {
 				completionHandler(error:ObjectStoreError.ConnectionFailure(message: error!.description), data: nil, response: nil)
 				return
 			}
-			
+
 			let httpResponse = response as! NSHTTPURLResponse
-			
+
 			switch httpResponse.statusCode {
 			case 401:
 				#if swift(>=3)
@@ -155,7 +159,7 @@ internal class NSURLRequestManager: BaseRequestManager {
 				break
 			}
 		}
-		
+
 		#if swift(>=3)
 			if (data == nil){
 				defaultSession.dataTask(with: request, completionHandler: networkTaskCompletionHandler).resume();
@@ -170,5 +174,5 @@ internal class NSURLRequestManager: BaseRequestManager {
 			}
 		#endif
 	}
-	
+
 }
