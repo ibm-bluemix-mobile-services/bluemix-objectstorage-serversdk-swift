@@ -93,5 +93,4 @@ class Swift3RequestManager: BaseRequestManager{
 		#endif
 	}
 
-
 }
