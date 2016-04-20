@@ -63,7 +63,7 @@ internal class BaseRequestManager: RequestManager {
 	Send a PUT request
 
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
@@ -93,7 +93,7 @@ internal class BaseRequestManager: RequestManager {
 	Send a POST request
 
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/

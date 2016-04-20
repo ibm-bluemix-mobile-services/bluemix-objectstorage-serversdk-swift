@@ -69,7 +69,8 @@ public class ObjectStore {
 		#else
 			logger.info("Connecting to IBM ObjectStore")
 			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-			requestManager.post(ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+			let headers = ["Content-Type": "application/json"]
+			requestManager.post(ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data()) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
 				} else {
@@ -133,7 +134,7 @@ public class ObjectStore {
 	- Parameter name: The name of container to be created
 	- Parameter completionHandler: Closure to be executed once container is created.
 	*/
-	public func createContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
+	public func createContainer(name: String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
 		#if swift(>=3)
 			logger.info(text: "Creating container [\(name)]")
 			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
@@ -144,7 +145,7 @@ public class ObjectStore {
 					// status 201 == create new container
 					// status 202 == updated existing container
 					self.logger.info(text: "Created container [\(name)]")
-					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
 				}
 			}
 		#else
@@ -157,11 +158,79 @@ public class ObjectStore {
 					// status 201 == create new container
 					// status 202 == updated existing container
 					self.logger.info("Created container [\(name)]")
-					completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
+					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
 				}
 			}
 		#endif
 	}
+
+	/**
+	 * Configures the specified container on the Object Storage service for web hosting.
+	 *
+	 * @param name The name for the container.
+	 * @param onSuccess Closure that should be invoked upon completion.
+	 */
+	public func configureContainerForWebHosting(name: String, completionHandler: (error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void) {
+		#if swift(>=3)
+			logger.info(text: "Creating container [\(name)]")
+			let headers = ["X-Container-Meta-Web-Listings" : "true"]
+			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+			requestManager.post(url: requestUrl, headers: headers) { (error, data, response) in
+				if let error = error {
+					completionHandler(error: error, container: nil)
+					return
+				}
+
+				guard let response = response else {
+					completionHandler(error: ObjectStoreError.ServerError, container: nil)
+					return
+				}
+
+				if response.statusCode == 204 {
+					self.logger.info(text: "Container [\(name)] configured for web hosting.")
+					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
+				} else {
+					completionHandler(error: ObjectStoreError.ServerError, container: nil)
+				}
+			}
+		#else
+			//TODO: Implement logic for Swift 2
+		#endif
+ }
+
+ /**
+  * Configures the specified container on the Object Storage service for public access.
+  *
+  * @param name The name for the container.
+  * @param completionHandler Closure that should be invoked upon completion.
+  */
+ public func configureContainerForPublicAccess(name: String, completionHandler: (error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void) {
+	 #if swift(>=3)
+		 logger.info(text: "Creating container [\(name)]")
+		 let headers = ["X-Container-Read" : ".r:*,.rlistings"]
+		 let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
+		 requestManager.post(url: requestUrl, headers: headers) { (error, data, response) in
+			 if let error = error {
+				 completionHandler(error: error, container: nil)
+				 return
+			 }
+
+			 guard let response = response else {
+				 completionHandler(error: ObjectStoreError.ServerError, container: nil)
+				 return
+			 }
+
+			 if response.statusCode == 204 {
+				 self.logger.info(text: "Container [\(name)] configured for public access.")
+				 completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
+			 } else {
+				 completionHandler(error: ObjectStoreError.ServerError, container: nil)
+			 }
+		 }
+	 #else
+		 //TODO: Implement logic for Swift 2
+	 #endif
+}
 
 	/**
 	Retrieve an existing container

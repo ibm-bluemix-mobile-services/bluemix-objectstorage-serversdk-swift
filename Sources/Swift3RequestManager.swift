@@ -34,7 +34,7 @@ class Swift3RequestManager: BaseRequestManager{
 	Send a PUT request
 
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
@@ -64,7 +64,7 @@ class Swift3RequestManager: BaseRequestManager{
 	Send a POST request
 
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
+  - Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
@@ -81,11 +81,11 @@ class Swift3RequestManager: BaseRequestManager{
 
 	- Parameter url: The URL to send request to
 	- Parameter method: The HTTP method to use
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	private func sendRequest(url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
+	private func sendRequest(url:String, method:String, headers: [String:String]? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
 		#if swift(>=3)
 			logger.error(text: "Not implemented")
 		#else

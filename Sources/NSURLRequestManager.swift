@@ -65,7 +65,7 @@ internal class NSURLRequestManager: BaseRequestManager {
 	Send a POST request
 
 	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter headers: Optional dictionary with HTTP headers for the request object (e.g. 'Content-Type')
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
@@ -94,10 +94,7 @@ internal class NSURLRequestManager: BaseRequestManager {
 			let request = NSMutableURLRequest(URL: NSURL(string: url)!)
 			request.HTTPMethod = method
 		#endif
-		// if let contentType = contentType {
-		// 	request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-		// }
-
+		
 		if let authToken = authToken {
 			request.setValue(authToken, forHTTPHeaderField: BaseRequestManager.X_AUTH_TOKEN)
 		}
