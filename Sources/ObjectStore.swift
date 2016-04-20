@@ -172,7 +172,7 @@ public class ObjectStore {
 	 */
 	public func configureContainerForWebHosting(name: String, completionHandler: (error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void) {
 		#if swift(>=3)
-			logger.info(text: "Creating container [\(name)]")
+			logger.info(text: "Configuring container [\(name)] for web hosting...")
 			let headers = ["X-Container-Meta-Web-Listings" : "true"]
 			let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
 			requestManager.post(url: requestUrl, headers: headers) { (error, data, response) in
@@ -187,7 +187,7 @@ public class ObjectStore {
 				}
 
 				if response.statusCode == 204 {
-					self.logger.info(text: "Container [\(name)] configured for web hosting.")
+					self.logger.info(text: "Container [\(name)] successfully configured for web hosting.")
 					completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
 				} else {
 					completionHandler(error: ObjectStoreError.ServerError, container: nil)
@@ -206,7 +206,7 @@ public class ObjectStore {
   */
  public func configureContainerForPublicAccess(name: String, completionHandler: (error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void) {
 	 #if swift(>=3)
-		 logger.info(text: "Creating container [\(name)]")
+		 logger.info(text: "Configuring container [\(name)] for public access...")
 		 let headers = ["X-Container-Read" : ".r:*,.rlistings"]
 		 let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
 		 requestManager.post(url: requestUrl, headers: headers) { (error, data, response) in
@@ -221,7 +221,7 @@ public class ObjectStore {
 			 }
 
 			 if response.statusCode == 204 {
-				 self.logger.info(text: "Container [\(name)] configured for public access.")
+				 self.logger.info(text: "Container [\(name)] successfully configured for public access.")
 				 completionHandler(error: nil, container: ObjectStoreContainer(name: name, url: requestUrl, objectStore: self))
 			 } else {
 				 completionHandler(error: ObjectStoreError.ServerError, container: nil)
