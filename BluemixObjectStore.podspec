@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BluemixObjectStore"
-  s.version          = "0.0.23"
+  s.version          = "0.0.24"
   s.summary          = "Swift SDK for IBM Object Store service on Bluemix"
   s.description      = "Swift SDK for IBM Object Store service on Bluemix. The SDK is currently in early development stages and available for iOS, OSX and Linux platforms"
   s.homepage         = "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-objectstore"
