@@ -133,6 +133,32 @@ objStore.deleteContainer(name: "container-name") { (error) in
 }
 ```
 
+#### Update account metadata
+
+```swift
+let metadata:Dictionary<String, String> = ["X-Account-Meta-SomeName":"SomeValue"]
+objStore.updateMetadata(metadata: metadata) { (error) in
+	if let error = error {
+		print("updateMetadata error :: \(error)")
+	} else {
+		print("updateMetadata success")
+	}
+}
+```
+
+#### Retrieve account metadata
+
+```swift
+objStore.retrieveMetadata { (error, metadata) in
+	if let error = error {
+		print("retrieveMetadata error :: \(error)")
+	} else {
+		print("retrieveMetadata success :: \(metadata)")
+	}
+}
+```
+
+
 ### ObjectStoreContainer
 
 Use `ObjectStoreContainer` instance to manage objects inside of particular container
@@ -197,6 +223,31 @@ container.delete { (error) in
 }
 ```
 
+#### Update container metadata
+
+```swift
+let metadata:Dictionary<String, String> = ["X-Container-Meta-SomeName":"SomeValue"]
+container.updateMetadata(metadata: metadata) { (error) in
+	if let error = error {
+		print("updateMetadata error :: \(error)")
+	} else {
+		print("updateMetadata success")
+	}
+}
+```
+
+#### Retrieve container metadata
+
+```swift
+container.retrieveMetadata { (error, metadata) in
+	if let error = error {
+		print("retrieveMetadata error :: \(error)")
+	} else {
+		print("retrieveMetadata success :: \(metadata)")
+	}
+}
+```
+
 ### ObjectStoreObject
 
 Use `ObjectStoreObjects` instance to load object content.
@@ -233,6 +284,31 @@ object.delete { (error) in
 		print("deleteObject error :: \(error)")
 	} else {
 		print("deleteObject success")
+	}
+}
+```
+
+#### Update object metadata
+
+```swift
+let metadata:Dictionary<String, String> = ["X-Object-Meta-SomeName":"SomeValue"]
+object.updateMetadata(metadata: metadata) { (error) in
+	if let error = error {
+		print("updateMetadata error :: \(error)")
+	} else {
+		print("updateMetadata success")
+	}
+}
+```
+
+#### Retrieve object metadata
+
+```swift
+object.retrieveMetadata { (error, metadata) in
+	if let error = error {
+		print("retrieveMetadata error :: \(error)")
+	} else {
+		print("retrieveMetadata success :: \(metadata)")
 	}
 }
 ```
