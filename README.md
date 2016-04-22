@@ -5,6 +5,12 @@
 
 This repository contains the Swift SDK for [IBM Object Store service on Bluemix](https://console.ng.bluemix.net/docs/services/ObjectStorage/index.html). The SDK is currently in early development stages and available for iOS, OSX and Linux platforms.
 
+Supported platforms are:
+
+* iOS 8+
+* OSX 10.11+
+* Swift 3 development snapshot 2016-04-12a
+
 ## Installation
 
 #### Cocoapods
@@ -19,7 +25,7 @@ end
 ```
 
 #### Swift package manager
-To install BluemixObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file 
+To install BluemixObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file
 
 ```Swift
 import PackageDescription
@@ -44,7 +50,7 @@ Import the BluemixObjectStore framework to the classes you want to use it in
 import BluemixObjectStore
 ```
 
-The BluemixObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below. 
+The BluemixObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below.
 
 ### ObjectStore
 
@@ -127,6 +133,32 @@ objStore.deleteContainer(name: "container-name") { (error) in
 }
 ```
 
+#### Update account metadata
+
+```swift
+let metadata:Dictionary<String, String> = ["X-Account-Meta-SomeName":"SomeValue"]
+objStore.updateMetadata(metadata: metadata) { (error) in
+	if let error = error {
+		print("updateMetadata error :: \(error)")
+	} else {
+		print("updateMetadata success")
+	}
+}
+```
+
+#### Retrieve account metadata
+
+```swift
+objStore.retrieveMetadata { (error, metadata) in
+	if let error = error {
+		print("retrieveMetadata error :: \(error)")
+	} else {
+		print("retrieveMetadata success :: \(metadata)")
+	}
+}
+```
+
+
 ### ObjectStoreContainer
 
 Use `ObjectStoreContainer` instance to manage objects inside of particular container
@@ -191,6 +223,31 @@ container.delete { (error) in
 }
 ```
 
+#### Update container metadata
+
+```swift
+let metadata:Dictionary<String, String> = ["X-Container-Meta-SomeName":"SomeValue"]
+container.updateMetadata(metadata: metadata) { (error) in
+	if let error = error {
+		print("updateMetadata error :: \(error)")
+	} else {
+		print("updateMetadata success")
+	}
+}
+```
+
+#### Retrieve container metadata
+
+```swift
+container.retrieveMetadata { (error, metadata) in
+	if let error = error {
+		print("retrieveMetadata error :: \(error)")
+	} else {
+		print("retrieveMetadata success :: \(metadata)")
+	}
+}
+```
+
 ### ObjectStoreObject
 
 Use `ObjectStoreObjects` instance to load object content.
@@ -227,6 +284,31 @@ object.delete { (error) in
 		print("deleteObject error :: \(error)")
 	} else {
 		print("deleteObject success")
+	}
+}
+```
+
+#### Update object metadata
+
+```swift
+let metadata:Dictionary<String, String> = ["X-Object-Meta-SomeName":"SomeValue"]
+object.updateMetadata(metadata: metadata) { (error) in
+	if let error = error {
+		print("updateMetadata error :: \(error)")
+	} else {
+		print("updateMetadata success")
+	}
+}
+```
+
+#### Retrieve object metadata
+
+```swift
+object.retrieveMetadata { (error, metadata) in
+	if let error = error {
+		print("retrieveMetadata error :: \(error)")
+	} else {
+		print("retrieveMetadata success :: \(metadata)")
 	}
 }
 ```

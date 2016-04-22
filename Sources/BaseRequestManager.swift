@@ -21,16 +21,20 @@ internal let NOOPNetworkRequestCompletionHandler:NetworkRequestCompletionHandler
 internal protocol RequestManager{
 	
 	/// Send a GET request
-	func get(url url:String, completionHandler:NetworkRequestCompletionHandler)
+	func get(url:String, headers:[String:String]?, completionHandler:NetworkRequestCompletionHandler)
 	
 	/// Send a PUT request
-	func put(url url:String, contentType:String?, data:NSData?, completionHandler:NetworkRequestCompletionHandler)
+	func put(url:String, headers:[String:String]?, data:NSData?, completionHandler:NetworkRequestCompletionHandler)
 	
 	/// Send a DELETE request
-	func delete(url url:String, completionHandler:NetworkRequestCompletionHandler)
+	func delete(url:String, headers:[String:String]?, completionHandler:NetworkRequestCompletionHandler)
 	
 	/// Send a POST request
-	func post(url url:String, contentType: String?, data:NSData?, completionHandler:NetworkRequestCompletionHandler)
+	func post(url:String, headers:[String:String]?, data:NSData?, completionHandler:NetworkRequestCompletionHandler)
+	
+	/// Send a HEAD request
+	func head(url:String, headers:[String:String]?, completionHandler:NetworkRequestCompletionHandler)
+
 }
 
 /** 
@@ -51,9 +55,28 @@ internal class BaseRequestManager: RequestManager {
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	func get(url url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		logger.error("Not implemented")
+	func get(url:String, headers:[String:String]? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "GET", headers: headers, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "GET", headers: headers, completionHandler: completionHandler)
+		#endif
 	}
+	
+	/**
+	Send a HEAD request
+	
+	- Parameter url: The URL to send request to
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	func head(url:String, headers:[String:String]? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "HEAD", headers: headers, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "HEAD", headers: headers, completionHandler: completionHandler)
+		#endif
+	}
+
 	
 	/**
 	Send a PUT request
@@ -63,8 +86,12 @@ internal class BaseRequestManager: RequestManager {
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	func put(url url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		logger.error("Not implemented")
+	func put(url:String, headers:[String:String]? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "PUT", headers: headers, data: data, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "PUT", headers:headers, data: data, completionHandler: completionHandler)
+		#endif
 	}
 	
 	/**
@@ -73,19 +100,44 @@ internal class BaseRequestManager: RequestManager {
 	- Parameter url: The URL to send request to
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	func delete(url url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		logger.error("Not implemented")
+	func delete(url:String, headers:[String:String]? = nil, completionHandler:NetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "DELETE", headers: headers, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "DELETE", headers: headers, completionHandler: completionHandler)
+		#endif
 	}
 	
 	/**
 	Send a POST request
 	
 	- Parameter url: The URL to send request to
+	- Parameter headers: A dictionary of http headers to add
+	- Parameter data: The data to send in request body
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	func post(url:String, headers:[String:String]? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "POST", headers: headers, data: data, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "POST", headers:headers, data: data, completionHandler: completionHandler)
+		#endif
+	}
+	
+	/**
+	Send a request
+	
+	- Parameter url: The URL to send request to
+	- Parameter method: The HTTP method to use
 	- Parameter contentType: The value of a 'Content-Type' header
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	func post(url url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		logger.error("Not implemented")
+	private func sendRequest(url:String, method:String, headers:[String:String]? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
+		#if swift(>=3)
+			logger.error(text: "Not implemented")
+		#else
+			logger.error("Not implemented")
+		#endif
 	}
 }
