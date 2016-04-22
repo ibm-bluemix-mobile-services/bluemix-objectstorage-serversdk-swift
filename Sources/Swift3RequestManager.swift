@@ -17,66 +17,6 @@ class Swift3RequestManager: BaseRequestManager{
 	private let logger = Logger(name: "Swift3RequestManager")
 
 	/**
-	Send a GET request
-
-	- Parameter url: The URL to send request to
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func get(url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			logger.error(text: "Not implemented")
-		#else
-			logger.error("Not implemented")
-		#endif
-	}
-
-	/**
-	Send a PUT request
-
-	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
-	- Parameter data: The data to send in request body
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func put(url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			logger.error(text: "Not implemented")
-		#else
-			logger.error("Not implemented")
-		#endif
-	}
-
-	/**
-	Send a DELETE request
-
-	- Parameter url: The URL to send request to
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func delete(url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			logger.error(text: "Not implemented")
-		#else
-			logger.error("Not implemented")
-		#endif
-	}
-
-	/**
-	Send a POST request
-
-	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
-	- Parameter data: The data to send in request body
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func post(url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			logger.error(text: "Not implemented")
-		#else
-			logger.error("Not implemented")
-		#endif
-	}
-
-	/**
 	Send a request
 
 	- Parameter url: The URL to send request to
@@ -85,7 +25,7 @@ class Swift3RequestManager: BaseRequestManager{
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	private func sendRequest(url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
+	private func sendRequest(url:String, method:String, headers:[String:String]? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
 		#if swift(>=3)
 			logger.error(text: "Not implemented")
 		#else

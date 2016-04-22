@@ -19,66 +19,6 @@ internal class NSURLRequestManager: BaseRequestManager {
 	private let logger = Logger(name: "RequestManager")
 
 	/**
-	Send a GET request
-	
-	- Parameter url: The URL to send request to
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func get(url:String, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			sendRequest(url: url, method: "GET", completionHandler: completionHandler)
-		#else
-			sendRequest(url, method: "GET", completionHandler: completionHandler)
-		#endif
-	}
-	
-	/**
-	Send a PUT request
-	
-	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
-	- Parameter data: The data to send in request body
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func put(url:String, contentType:String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			sendRequest(url: url, method: "PUT", data: data, completionHandler: completionHandler)
-		#else
-			sendRequest(url, method: "PUT", data: data, completionHandler: completionHandler)
-		#endif
-	}
-	
-	/**
-	Send a DELETE request
-	
-	- Parameter url: The URL to send request to
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func delete(url:String, completionHandler:NetworkRequestCompletionHandler){
-		#if swift(>=3)
-			sendRequest(url: url, method: "DELETE", completionHandler: completionHandler)
-		#else
-			sendRequest(url, method: "DELETE", completionHandler: completionHandler)
-		#endif
-	}
-	
-	/**
-	Send a POST request
-	
-	- Parameter url: The URL to send request to
-	- Parameter contentType: The value of a 'Content-Type' header
-	- Parameter data: The data to send in request body
-	- Parameter completionHandler: NetworkRequestCompletionHandler instance
-	*/
-	override func post(url:String, contentType: String? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
-		#if swift(>=3)
-			sendRequest(url: url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
-		#else
-			sendRequest(url, method: "POST", contentType: contentType, data: data, completionHandler: completionHandler)
-		#endif
-	}
-	
-	/**
 	Send a request
 	
 	- Parameter url: The URL to send request to
@@ -87,7 +27,8 @@ internal class NSURLRequestManager: BaseRequestManager {
 	- Parameter data: The data to send in request body
 	- Parameter completionHandler: NetworkRequestCompletionHandler instance
 	*/
-	private func sendRequest(url:String, method:String, contentType: String? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
+	private func sendRequest(url:String, method:String, headers:[String:String]? = nil, data: NSData? = nil, completionHandler:NetworkRequestCompletionHandler){
+		
 		#if swift(>=3)
 			let request = NSMutableURLRequest(url: NSURL(string: url)!)
 			request.httpMethod = method
@@ -95,9 +36,13 @@ internal class NSURLRequestManager: BaseRequestManager {
 			let request = NSMutableURLRequest(URL: NSURL(string: url)!)
 			request.HTTPMethod = method
 		#endif
-		if let contentType = contentType{
-			request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+		
+		if let headers = headers{
+			for (headerName, headerValue) in headers{
+				request.setValue(headerValue, forHTTPHeaderField: headerName)
+			}
 		}
+
 		if let authToken = authToken{
 			request.setValue(authToken, forHTTPHeaderField: BaseRequestManager.X_AUTH_TOKEN)
 		}
@@ -171,4 +116,79 @@ internal class NSURLRequestManager: BaseRequestManager {
 		#endif
 	}
 	
+	
+	/**
+	Send a GET request
+	
+	- Parameter url: The URL to send request to
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	override func get(url:String, headers:[String:String]? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "GET", headers: headers, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "GET", headers: headers, completionHandler: completionHandler)
+		#endif
+	}
+	
+	/**
+	Send a HEAD request
+	
+	- Parameter url: The URL to send request to
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	override func head(url:String, headers:[String:String]? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "HEAD", headers: headers, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "HEAD", headers: headers, completionHandler: completionHandler)
+		#endif
+	}
+
+	
+	/**
+	Send a PUT request
+	
+	- Parameter url: The URL to send request to
+	- Parameter contentType: The value of a 'Content-Type' header
+	- Parameter data: The data to send in request body
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	override func put(url:String, headers:[String:String]? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "PUT", headers: headers, data: data, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "PUT", headers:headers, data: data, completionHandler: completionHandler)
+		#endif
+	}
+	
+	/**
+	Send a DELETE request
+	
+	- Parameter url: The URL to send request to
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	override func delete(url:String, headers:[String:String]? = nil, completionHandler:NetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "DELETE", headers: headers, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "DELETE", headers: headers, completionHandler: completionHandler)
+		#endif
+	}
+	
+	/**
+	Send a POST request
+	
+	- Parameter url: The URL to send request to
+	- Parameter headers: A dictionary of http headers to add
+	- Parameter data: The data to send in request body
+	- Parameter completionHandler: NetworkRequestCompletionHandler instance
+	*/
+	override func post(url:String, headers:[String:String]? = nil, data:NSData? = nil, completionHandler:NetworkRequestCompletionHandler = NOOPNetworkRequestCompletionHandler){
+		#if swift(>=3)
+			sendRequest(url: url, method: "POST", headers: headers, data: data, completionHandler: completionHandler)
+		#else
+			sendRequest(url, method: "POST", headers:headers, data: data, completionHandler: completionHandler)
+		#endif
+	}
 }

@@ -51,10 +51,11 @@ public class ObjectStore {
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
 	public func connect(userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
+		let headers = ["Content-Type":"application/json"];
+		let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
 		#if swift(>=3)
 			logger.info(text: "Connecting to IBM ObjectStore")
-			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-			requestManager.post(url: ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+			requestManager.post(url: ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data()) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
 				} else {
@@ -67,8 +68,7 @@ public class ObjectStore {
 			}
 		#else
 			logger.info("Connecting to IBM ObjectStore")
-			let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-			requestManager.post(ObjectStore.TOKEN_ENDPOINT, contentType: "application/json", data: authRequestBody.data()) { (error, data, response) in
+			requestManager.post(ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data()) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
 				} else {
@@ -95,10 +95,10 @@ public class ObjectStore {
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
 	public func connect(authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
+		self.requestManager.authToken = authToken
+		let requestUrl = region + projectId
 		#if swift(>=3)
 			logger.info(text: "Connecting to IBM ObjectStore")
-			self.requestManager.authToken = authToken
-			let requestUrl = region + projectId
 			requestManager.get(url: requestUrl ) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
@@ -111,8 +111,6 @@ public class ObjectStore {
 			}
 		#else
 			logger.info("Connecting to IBM ObjectStore")
-			self.requestManager.authToken = authToken
-			let requestUrl = region + projectId
 			requestManager.get(requestUrl ) { (error, data, response) in
 				if let error = error {
 					completionHandler(error: error)
@@ -209,12 +207,7 @@ public class ObjectStore {
 					self.logger.info(text: "Retrieved containers list")
 					var containersList = [ObjectStoreContainer]()
 					let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-					#if swift(>=3)
-						let containerNames = responseData.components(separatedBy: "\n")
-					#else
-						let containerNames = responseData.componentsSeparatedByString("\n")
-					#endif
-					
+					let containerNames = responseData.components(separatedBy: "\n")
 					for containerName:String in containerNames{
 						if containerName.characters.count == 0 {
 							continue
@@ -234,11 +227,7 @@ public class ObjectStore {
 					self.logger.info("Retrieved containers list")
 					var containersList = [ObjectStoreContainer]()
 					let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-					#if swift(>=3)
-						let containerNames = responseData.components(separatedBy: "\n")
-					#else
-						let containerNames = responseData.componentsSeparatedByString("\n")
-					#endif
+					let containerNames = responseData.componentsSeparatedByString("\n")
 					
 					for containerName:String in containerNames{
 						if containerName.characters.count == 0 {
@@ -284,6 +273,74 @@ public class ObjectStore {
 			}
 		#endif
 	}
+
+	/**
+	Update account metadata
+
+	- Parameter metadata: a dictionary of metadata items, e.g. ["X-Account-Meta-Subject":"AmericanHistory"]. It is possible to supply multiple metadata items within same invocation. To delete a particular metadata item set it's value to an empty string, e.g. ["X-Account-Meta-Subject":""]. See Object Storage API v1 for more information about possible metadata items - http://developer.openstack.org/api-ref-objectstorage-v1.html
+	- Parameter completionHandler: Closure to be executed once metadata is updated.
+	*/
+	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler:(error:ObjectStoreError?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Updating account metadata :: \(metadata)")
+			requestManager.post(url:projectEndpoint, headers: metadata){(error, data, response) in
+				if let error = error{
+					completionHandler(error: error)
+				} else {
+					self.logger.info(text: "Account metadata updating")
+					completionHandler(error: nil)
+				}
+			}
+		#else
+			logger.info("Updating account metadata :: \(metadata)")
+			requestManager.post(projectEndpoint, headers: metadata){(error, data, response) in
+				if let error = error{
+					completionHandler(error: error)
+				} else {
+					self.logger.info("Account metadata updating")
+					completionHandler(error: nil)
+				}
+			}
+		#endif
+	}
+	
+	/**
+	Retrieve account metadata. The metadata will be returned to a completionHandler as a Dictionary<String, String> instance with set of keys and values
+
+	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
+	*/
+	public func retrieveMetadata(completionHandler:(error:ObjectStoreError?, metadata: Dictionary<String, String>?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Retrieving account metadata")
+			requestManager.head(url:projectEndpoint){(error, data, response) in
+				if let error = error{
+					completionHandler(error:error, metadata: nil)
+				} else {
+					self.logger.info(text: "Metadata retrieved")
+					var metadataHeaders = Dictionary<String, String>()
+					for (headerName, headerValue) in response!.allHeaderFields{
+						metadataHeaders[String(headerName)] = String(headerValue)
+					}
+					completionHandler(error: nil, metadata: metadataHeaders)
+				}
+			}
+		#else
+			logger.info("Retrieving account metadata")
+			requestManager.head(projectEndpoint){(error, data, response) in
+				if let error = error{
+					completionHandler(error:error, metadata: nil)
+				} else {
+					self.logger.info("Metadata retrieved")
+					var metadataHeaders = Dictionary<String, String>()
+					for (headerName, headerValue) in response!.allHeaderFields{
+						metadataHeaders[String(headerName)] = String(headerValue)
+					}
+					completionHandler(error: nil, metadata: metadataHeaders)
+				}
+			}
+		#endif
+	}
+
 }
 #if swift(>=3)
 #else

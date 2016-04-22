@@ -54,9 +54,7 @@ public class ObjectStoreObject{
 					completionHandler(error: error, data: nil)
 				} else {
 					self.logger.info(text: "Loaded object")
-					if shouldCache {
-						self.cachedData = data
-					}
+					self.cachedData = shouldCache ? data : nil;
 					completionHandler(error: nil, data:data)
 				}
 			}
@@ -67,9 +65,7 @@ public class ObjectStoreObject{
 					completionHandler(error: error, data: nil)
 				} else {
 					self.logger.info("Loaded object")
-					if shouldCache {
-						self.cachedData = data
-					}
+					self.cachedData = shouldCache ? data : nil;
 					completionHandler(error: nil, data:data)
 				}
 			}
@@ -86,6 +82,74 @@ public class ObjectStoreObject{
 			self.container.deleteObject(self.name, completionHandler: completionHandler)
 		#endif
 	}
+
+	/**
+	Update object metadata
+	
+	- Parameter metadata: a dictionary of metadata items, e.g. ["X-Object-Meta-Subject":"AmericanHistory"]. It is possible to supply multiple metadata items within same invocation. To delete a particular metadata item set it's value to an empty string, e.g. ["X-Object-Meta-Subject":""]. See Object Storage API v1 for more information about possible metadata items - http://developer.openstack.org/api-ref-objectstorage-v1.html
+	- Parameter completionHandler: Closure to be executed once metadata is updated.
+	*/
+	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler:(error:ObjectStoreError?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Updating object metadata :: \(metadata)")
+			container.objectStore.requestManager.post(url: self.url, headers: metadata){(error, data, response) in
+				if let error = error{
+					completionHandler(error: error)
+				} else {
+					self.logger.info(text: "Object metadata updated")
+					completionHandler(error: nil)
+				}
+			}
+		#else
+			logger.info("Updating object metadata :: \(metadata)")
+			container.objectStore.requestManager.post(self.url, headers: metadata){(error, data, response) in
+				if let error = error{
+					completionHandler(error: error)
+				} else {
+					self.logger.info("Object metadata updated")
+					completionHandler(error: nil)
+				}
+			}
+		#endif
+	}
+	
+	/**
+	Retrieve object metadata. The metadata will be returned to a completionHandler as a Dictionary<String, String> instance with set of keys and values
+	
+	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
+	*/
+	public func retrieveMetadata(completionHandler:(error:ObjectStoreError?, metadata: Dictionary<String, String>?) -> Void){
+		#if swift(>=3)
+			logger.info(text: "Retrieving object metadata")
+			container.objectStore.requestManager.head(url: self.url){(error, data, response) in
+				if let error = error{
+					completionHandler(error:error, metadata: nil)
+				} else {
+					self.logger.info(text: "Metadata retrieved")
+					var metadataHeaders = Dictionary<String, String>()
+					for (headerName, headerValue) in response!.allHeaderFields{
+						metadataHeaders[String(headerName)] = String(headerValue)
+					}
+					completionHandler(error: nil, metadata: metadataHeaders)
+				}
+			}
+		#else
+			logger.info("Retrieving object metadata")
+			container.objectStore.requestManager.head(self.url){(error, data, response) in
+				if let error = error{
+					completionHandler(error:error, metadata: nil)
+				} else {
+					self.logger.info("Metadata retrieved")
+					var metadataHeaders = Dictionary<String, String>()
+					for (headerName, headerValue) in response!.allHeaderFields{
+						metadataHeaders[String(headerName)] = String(headerValue)
+					}
+					completionHandler(error: nil, metadata: metadataHeaders)
+				}
+			}
+		#endif
+	}
+
 }
 
 #if swift(>=3)
