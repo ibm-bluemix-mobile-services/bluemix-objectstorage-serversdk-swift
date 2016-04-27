@@ -16,7 +16,7 @@
 # limitations under the License.
 ##
 
-# This script builds the corresponding Kitura Swift Package in a
+# This script builds the corresponding bluemix-objectstore-swift-sdk in a
 # Docker ubuntu container (Travis CI).
 
 # If any commands fail, we want the shell script to exit immediately.
@@ -42,16 +42,16 @@ if [[ (-z "$2") && (-z "$3") ]]
     hostFolder=$2
     projectName=$3
     volumeClause="-v $hostFolder:/root/$projectName"
-    cmdClause="/root/$projectName/build_package.sh"
+    cmdClause="/root/$projectName/build/build_package.sh"
 fi
 echo ">> volumeClause: $volumeClause"
 echo ">> cmdClause: $cmdClause"
 
 # Pull down docker image
-docker pull ibmcom/kitura-ubuntu:latest
+docker pull swiftdocker/swift
 
 # Run docker container
 # Please note that when a volume from the host is mounted on the container,
 # if the same folder already exists in the container, then it is replaced
 # with the contents from the host.
-docker run --rm -e KITURA_BRANCH=$branch $volumeClause ibmcom/kitura-ubuntu:latest $cmdClause
+docker run --rm $volumeClause swiftdocker/swift:latest $cmdClause

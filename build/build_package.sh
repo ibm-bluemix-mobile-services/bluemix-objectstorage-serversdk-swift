@@ -16,7 +16,7 @@
 # limitations under the License.
 ##
 
-# This script builds the Kitura sample app on Travis CI.
+# This script builds the bluemix-objectstore-swift-sdk on Travis CI.
 # If running on the OS X platform, homebrew (http://brew.sh/) must be installed
 # for this script to work.
 
@@ -49,7 +49,7 @@ fi
 echo ">> osName: $osName"
 
 # Make the working directory the parent folder of this script
-cd "$(dirname "$0")"
+cd "$(dirname "$0")"/..
 
 # Get project name from project folder
 export projectFolder=`pwd`
@@ -58,7 +58,7 @@ echo ">> projectName: $projectName"
 echo
 
 # Install Swift binaries
-source ${projectFolder}/${osName}/install_swift_binaries.sh
+source ${projectFolder}/build/${osName}/install_swift_binaries.sh
 
 # Show path
 echo ">> PATH: $PATH"

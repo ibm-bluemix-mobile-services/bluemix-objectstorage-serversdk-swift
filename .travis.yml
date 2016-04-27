@@ -7,15 +7,15 @@ branches:
 
 matrix:
   include:
-#    - os: linux
-#      services: docker
-#      sudo: required
+    - os: linux
+      services: docker
+      sudo: required
     - os: osx
       osx_image: xcode7.2
       sudo: required
 
 script:
   - echo ">> Let's build and test the '$TRAVIS_BRANCH' branch for bluemix-objectstore-swift-sdk."
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./run_ubuntu_container.sh $TRAVIS_BRANCH $TRAVIS_BUILD_DIR bluemix-objectstore-swift-sdk; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./build_package.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./build/run_ubuntu_container.sh $TRAVIS_BRANCH $TRAVIS_BUILD_DIR bluemix-objectstore-swift-sdk; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./build/build_package.sh ; fi
   - echo ">> Build and tests completed. See above for status."
