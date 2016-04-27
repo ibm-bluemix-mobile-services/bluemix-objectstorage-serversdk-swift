@@ -3,7 +3,8 @@
 # whitelist
 branches:
   only:
-    - feature/travis-build
+    - development
+    - master
 
 matrix:
   include:
