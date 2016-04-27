@@ -48,10 +48,10 @@ echo ">> volumeClause: $volumeClause"
 echo ">> cmdClause: $cmdClause"
 
 # Pull down docker image
-docker pull swiftdocker/swift
+docker pull ibmcom/kitura-ubuntu:latest
 
 # Run docker container
 # Please note that when a volume from the host is mounted on the container,
 # if the same folder already exists in the container, then it is replaced
 # with the contents from the host.
-docker run --rm $volumeClause swiftdocker/swift:latest $cmdClause
+docker run --rm $volumeClause ibmcom/kitura-ubuntu:latest $cmdClause
