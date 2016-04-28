@@ -11,87 +11,26 @@ class Tester{
 	let objectName = "photo1.jpg"
 	let region = ObjectStore.REGION_DALLAS
 
-	func run(){
+	func run() throws -> AnyObject {
 		let objStore = ObjectStore(projectId: projectId)
-//		objStore.connect(authToken: authToken, region: region) { (error) in
-//			if let error = error {
-//				print("connect failure \(error)")
-//			} else {
-//				print("connect success")
-//				self.getContainer(objStore: objStore)
-//				self.updateMetadata(objStore: objStore)
-//			}
-//		}
-		
-		objStore.connect(userId: userId, password: password, region: region){ (error) in
-			if let error = error {
-				print("connect failure \(error)")
-			} else {
-				print("connect success")
-				self.getContainer(objStore: objStore)
-			}
-		}
-	}
 
-	func updateMetadata(container:ObjectStoreContainer){
-		let metadata:Dictionary<String, String> = ["X-Account-Meta-Test1":"111", "X-Account-Meta-Test2":"zzz", "X-Container-Meta-Web-Listings":"true"]
-		container.updateMetadata(metadata: metadata) { (error) in
-			if let error = error {
-				print("updateMetadata failure \(error)")
-			} else {
-				print("updateMetadata success")
-				self.retrieveMetadata(container: container)
-			}
-		}
-	}
+		try objStore.connect(userId: userId, password: password, region: region)
+		//try objStore.connect(authToken: authToken, region: region)
+		//try objStore.updateMetadata(metadata: ["X-Account-Meta-Test":"X-Account-Meta-Text"])
+		//let _ = try objStore.retrieveMetadata()
 
-	func retrieveMetadata(container:ObjectStoreContainer) {
-		container.retrieveMetadata { (error, metadata) in
-			if let error = error {
-				print("retrieveMetadata failure \(error)")
-			} else {
-				print("retrieveMetadata success \(metadata)")
-			}
-		}
-	}
+		let container = try objStore.retrieveContainer(name: containerName)
+		//try container.updateMetadata(metadata: ["X-Container-Meta-Test":"X-Container-Meta-Text"])
+		//let _ = try container.retrieveMetadata()
 
-	func getContainer(objStore:ObjectStore){
-		objStore.retrieveContainer(name: containerName, completionHandler: { (error, container) in
-			if let error = error {
-				print("retrieveContainer failure \(error)")
-			} else {
-				print("retrieveContainer success \(container!.url)")
-				self.getObject(objContainer: container!)
-				//self.updateMetadata(container: container!)
-			}
-		})
-
-	}
-
-	func getObject(objContainer:ObjectStoreContainer){
-		objContainer.retrieveObject(name: objectName) { (error, object) in
-			if let error = error {
-				print("getObject failure \(error)")
-			} else {
-				print("getObject success")
-				self.load(object: object!)
-			}
-		}
-	}
-
-	func load(object:ObjectStoreObject){
-		object.load(shouldCache: false) { (error, data) in
-			if let error = error {
-				print("loadObject failure \(error)")
-			} else {
-				print("loadObject success \(data)")
-				print("loadObject success \(String(data:data!, encoding:NSUTF8StringEncoding))")
-				data?.write(toFile: "img1.jpg", atomically: true)
-			}
-		}
+		let object = try container.retrieveObject(name: objectName)
+		//try object.updateMetadata(metadata: ["X-Object-Meta-Test":"X-Object-Meta-Text"])
+		let _ = try object.retrieveMetadata()
+		//let objectData = try object.load()
+		print("ok")
+		return "ok"
 	}
 }
 
-Tester().run();
+let res = try? Tester().run();
 //NSRunLoop.current().run()
-

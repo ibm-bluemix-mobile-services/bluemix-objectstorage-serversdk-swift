@@ -48,25 +48,25 @@ public class ObjectStoreObject{
 	- Parameter shouldCache: Defines whether object content loaded from IBM Object Store service will be cached by this ObjectStoreObject instance
 	- Parameter completionHandler: Closure to be executed once object is created
 	*/
-	public func load(shouldCache:Bool, completionHandler:(error: ObjectStoreError?, data:NSData?)->Void){
+	public func load(shouldCache:Bool = false) throws -> NSData{
 		logger.info("Loading object")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
-		HTTPSClient.get(url: self.url, headers: headers) { (error, data, status, headers) in
-			if let error = error {
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), data: nil)
-			} else {
-				self.logger.info("Loaded object")
-				self.cachedData = shouldCache ? data : nil;
-				completionHandler(error: nil, data:data)
-			}
+		let response = HTTPSClient.get(url: self.url, headers: headers)
+ 
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Loaded object")
+			self.cachedData = shouldCache ? response.data! : nil;
+			return response.data!
 		}
 	}
 
 	/**
 	Delete the object
 	*/
-	public func delete(completionHandler:(error:ObjectStoreError?)->Void){
-		self.container.deleteObject(name: self.name, completionHandler: completionHandler)
+	public func delete() throws{
+		try self.container.deleteObject(name: self.name)
 	}
 
 	/**
@@ -75,16 +75,15 @@ public class ObjectStoreObject{
 	- Parameter metadata: a dictionary of metadata items, e.g. ["X-Object-Meta-Subject":"AmericanHistory"]. It is possible to supply multiple metadata items within same invocation. To delete a particular metadata item set it's value to an empty string, e.g. ["X-Object-Meta-Subject":""]. See Object Storage API v1 for more information about possible metadata items - http://developer.openstack.org/api-ref-objectstorage-v1.html
 	- Parameter completionHandler: Closure to be executed once metadata is updated.
 	*/
-	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler:(error:ObjectStoreError?) -> Void){
-		logger.info("Updating object metadata :: \(metadata)")
+	public func updateMetadata(metadata:Dictionary<String, String>) throws {
+		logger.info("Updating metadata :: \(metadata)")
 		let headers = Utils.createHeaderDictionaryWithAuthToken(and: metadata)
-		HTTPSClient.post(url: self.url, headers: headers){(error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-			} else {
-				self.logger.info("Object metadata updated")
-				completionHandler(error: nil)
-			}
+		let response = HTTPSClient.post(url: self.url, headers: headers)
+		
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Metadata updated")
 		}
 	}
 
@@ -93,16 +92,16 @@ public class ObjectStoreObject{
 
 	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
 	*/
-	public func retrieveMetadata(completionHandler:(error:ObjectStoreError?, metadata: Dictionary<String, String>?) -> Void){
-		logger.info("Retrieving object metadata")
+	public func retrieveMetadata() throws ->  Dictionary<String, String>{
+		logger.info("Object metadata")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
-		HTTPSClient.head(url: self.url, headers: headers){(error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), metadata: nil)
-			} else {
-				self.logger.info("Metadata retrieved")
-				completionHandler(error: nil, metadata: headers)
-			}
+		let response = HTTPSClient.head(url: self.url, headers: headers)
+		
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Metadata retrieved")
+			return headers
 		}
 	}
 }

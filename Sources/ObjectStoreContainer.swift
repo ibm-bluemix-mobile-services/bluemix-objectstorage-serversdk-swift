@@ -41,17 +41,17 @@ public class ObjectStoreContainer{
 	- Parameter data: The object content
 	- Parameter completionHandler: Closure to be executed once object is created
 	*/
-	public func storeObject(name:String, data:NSData, completionHandler:(error: ObjectStoreError?, object: ObjectStoreObject?)->Void){
+	public func storeObject(name:String, data:NSData) throws -> ObjectStoreObject{
 		logger.info("Storing object [\(name)]")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = Utils.generateObjectUrl(baseUrl: self.url, objectName: name)
-		HTTPSClient.put(url: requestUrl, headers: headers, data: data) { (error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), object: nil)
-			} else {
-				self.logger.info("Stored object [\(name)]")
-				completionHandler(error: nil, object: ObjectStoreObject(name:name, url: requestUrl, container: self))
-			}
+		let response = HTTPSClient.put(url: requestUrl, headers: headers, data: data)
+ 
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Stored object [\(name)]")
+			return ObjectStoreObject(name:name, url: requestUrl, container: self)
 		}
 	}
 
@@ -61,17 +61,17 @@ public class ObjectStoreContainer{
 	- Parameter name: The name of the object to be retrieved
 	- Parameter completionHandler: Closure to be executed once object is retrieved
 	*/
-	public func retrieveObject(name:String, completionHandler:(error: ObjectStoreError?, object: ObjectStoreObject?)->Void) {
+	public func retrieveObject(name:String) throws -> ObjectStoreObject {
 		logger.info("Retrieving object [\(name)]")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = Utils.generateObjectUrl(baseUrl: self.url, objectName: name)
-		HTTPSClient.get(url: requestUrl, headers: headers) { (error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), object: nil)
-			} else {
-				self.logger.info("Retrieved object [\(name)]")
-				completionHandler(error: nil, object: ObjectStoreObject(name:name, url: requestUrl, container: self))
-			}
+		let response = HTTPSClient.get(url: requestUrl, headers: headers)
+ 
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Retrieved object [\(name)]")
+			return ObjectStoreObject(name:name, url: requestUrl, container: self)
 		}
 	}
 
@@ -80,30 +80,31 @@ public class ObjectStoreContainer{
 
 	- Parameter completionHandler: Closure to be executed once object list is retrieved
 	*/
-	public func retrieveObjectsList(completionHandler:(error: ObjectStoreError?, objects: [ObjectStoreObject]?) -> Void){
+	public func retrieveObjectsList() throws -> [ObjectStoreObject]{
 		logger.info("Retrieving objects list")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
-		HTTPSClient.get(url: self.url, headers: headers) { (error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), objects: nil)
-			} else {
-				self.logger.info("Retrieved objects list")
-				var objectsList = [ObjectStoreObject]()
-				let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-				#if os(Linux)
-					let objectNames = responseData.componentsSeparatedByString("\n")
-				#else
-					let objectNames = responseData.components(separatedBy: "\n")
-				#endif
-				for objectName:String in objectNames{
-					if objectName.characters.count == 0 {
-						continue
-					}
-					let objectUrl = self.url + "/" + Utils.urlPathEncode(text: objectName)
-					objectsList.append(ObjectStoreObject(name:objectName, url: objectUrl, container: self))
+		let response = HTTPSClient.get(url: self.url, headers: headers)
+ 
+
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Retrieved objects list")
+			var objectsList = [ObjectStoreObject]()
+			let responseData = String(data: response.data!, encoding: NSUTF8StringEncoding)!
+			#if os(Linux)
+				let objectNames = responseData.componentsSeparatedByString("\n")
+			#else
+				let objectNames = responseData.components(separatedBy: "\n")
+			#endif
+			for objectName:String in objectNames{
+				if objectName.characters.count == 0 {
+					continue
 				}
-				completionHandler(error: nil, objects: objectsList)
+				let objectUrl = self.url + "/" + Utils.urlPathEncode(text: objectName)
+				objectsList.append(ObjectStoreObject(name:objectName, url: objectUrl, container: self))
 			}
+			return objectsList
 		}
 	}
 
@@ -113,18 +114,18 @@ public class ObjectStoreContainer{
 	- Parameter name: The name of the object to be deleted
 	- Parameter completionHandler: Closure to be executed once object is deleted
 	*/
-	public func deleteObject(name:String, completionHandler:(error: ObjectStoreError?) -> Void){
+	public func deleteObject(name:String) throws {
 		logger.info("Deleting object [\(name)]")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = Utils.generateObjectUrl(baseUrl: self.url, objectName: name)
-		HTTPSClient.get(url: requestUrl, headers: headers) { (error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-			} else {
-				self.logger.info("Deleted object [\(name)]")
-				completionHandler(error: nil)
-			}
+		let response = HTTPSClient.get(url: requestUrl, headers: headers)
+ 
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Deleted object [\(name)]")
 		}
+
 	}
 
 	/**
@@ -132,8 +133,8 @@ public class ObjectStoreContainer{
 
 	- Parameter completionHandler: Closure to be executed once container is deleted
 	*/
-	public func delete(completionHandler:(error:ObjectStoreError?)->Void){
-		self.objectStore.deleteContainer(name: self.name, completionHandler: completionHandler)
+	public func delete() throws{
+		try self.objectStore.deleteContainer(name: self.name)
 	}
 
 	/**
@@ -142,16 +143,15 @@ public class ObjectStoreContainer{
 	- Parameter metadata: a dictionary of metadata items, e.g. ["X-Container-Meta-Subject":"AmericanHistory"]. It is possible to supply multiple metadata items within same invocation. To delete a particular metadata item set it's value to an empty string, e.g. ["X-Container-Meta-Subject":""]. See Object Storage API v1 for more information about possible metadata items - http://developer.openstack.org/api-ref-objectstorage-v1.html
 	- Parameter completionHandler: Closure to be executed once metadata is updated.
 	*/
-	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler:(error:ObjectStoreError?) -> Void){
-		logger.info("Updating container metadata :: \(metadata)")
+	public func updateMetadata(metadata:Dictionary<String, String>) throws{
+		logger.info("Updating metadata :: \(metadata)")
 		let headers = Utils.createHeaderDictionaryWithAuthToken(and: metadata)
-		HTTPSClient.post(url: self.url, headers: headers){(error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-			} else {
-				self.logger.info("Container metadata updated")
-				completionHandler(error: nil)
-			}
+		let response = HTTPSClient.post(url: self.url, headers: headers)
+
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Metadata updated")
 		}
 	}
 
@@ -160,16 +160,16 @@ public class ObjectStoreContainer{
 
 	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
 	*/
-	public func retrieveMetadata(completionHandler:(error:ObjectStoreError?, metadata: Dictionary<String, String>?) -> Void){
-		logger.info("Retrieving container metadata")
+	public func retrieveMetadata() throws -> Dictionary<String, String>{
+		logger.info("Retrieving metadata")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
-		HTTPSClient.head(url: self.url, headers: headers){(error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), metadata: nil)
-			} else {
-				self.logger.info("Metadata retrieved")
-				completionHandler(error: nil, metadata: headers)
-			}
+		let response = HTTPSClient.head(url: self.url, headers: headers)
+
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Metadata retrieved")
+			return headers
 		}
 	}
 }

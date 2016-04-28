@@ -52,22 +52,19 @@ public class ObjectStore {
 	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
-	public func connect(userId:String, password:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
+	public func connect(userId:String, password:String, region:String) throws {
 		let headers = ["Content-Type":"application/json"];
 		let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-			logger.info("Connecting to IBM ObjectStore")
+		logger.info("Connecting to IBM ObjectStore")
 		
-			HTTPSClient.post(url: ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data()) { (error, data, status, headers) in
-				if let error = error {
-					completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-				} else {
-					self.logger.info("Connected to IBM ObjectStore")
-					Utils.authToken = headers![ObjectStore.X_SUBJECT_TOKEN]
-					self.projectEndpoint = region + self.projectId
-					completionHandler(error: nil)
-
-				}
-			}
+		let response = HTTPSClient.post(url: ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data())
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Connected to IBM ObjectStore")
+			Utils.authToken = response.headers![ObjectStore.X_SUBJECT_TOKEN]
+			self.projectEndpoint = region + self.projectId
+		}
 
 		// TODO: handle expiration
 		// let body = AuthorizationResponseBody(data:data!).json
@@ -81,20 +78,18 @@ public class ObjectStore {
 	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
-	public func connect(authToken:String, region:String, completionHandler: (error:ObjectStoreError?) -> Void){
+	public func connect(authToken:String, region:String) throws{
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = region + projectId
 		logger.info("Connecting to IBM ObjectStore")
 
-		HTTPSClient.get(url: requestUrl, headers: headers) { (error, data, status, headers) in
-			if let error = error {
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-			} else {
-				self.logger.info("Connected to IBM ObjectStore")
-				self.projectEndpoint = region + self.projectId
-				completionHandler(error: nil)
-
-			}
+		let response = HTTPSClient.get(url: requestUrl, headers: headers)
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Connected to IBM ObjectStore")
+			self.projectEndpoint = region + self.projectId
+			Utils.authToken = authToken
 		}
 	}
 
@@ -104,19 +99,18 @@ public class ObjectStore {
 	- Parameter name: The name of container to be created
 	- Parameter completionHandler: Closure to be executed once container is created.
 	*/
-	public func createContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?) -> Void){
+	public func createContainer(name:String) throws -> ObjectStoreContainer{
 		logger.info("Creating container [\(name)]")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
-		HTTPSClient.put(url: requestUrl, headers: headers) { (error, data, status, headers) in
-			if let error = error {
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), container: nil)
-			} else {
-				// status 201 == create new container
-				// status 202 == updated existing container
-				self.logger.info("Created container [\(name)]")
-				completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
-			}
+		let response = HTTPSClient.put(url: requestUrl, headers: headers)
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			// status 201 == create new container
+			// status 202 == updated existing container
+			self.logger.info("Created container [\(name)]")
+			return ObjectStoreContainer(name:name, url: requestUrl, objectStore: self)
 		}
 	}
 
@@ -126,17 +120,19 @@ public class ObjectStore {
 	- Parameter name: The name of container to retrieve
 	- Parameter completionHandler: Closure to be executed once container is retrieved.
 	*/
-	public func retrieveContainer(name:String, completionHandler:(error: ObjectStoreError?, container: ObjectStoreContainer?)->Void) {
+	public func retrieveContainer(name:String) throws -> ObjectStoreContainer {
 		logger.info("Retrieving container [\(name)]")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
-		HTTPSClient.get(url: requestUrl, headers: headers) { (error, data, status, headers) in
-			if let error = error {
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), container: nil)
-			} else {
-				self.logger.info("Retrieved container [\(name)]")
-				completionHandler(error: nil, container: ObjectStoreContainer(name:name, url: requestUrl, objectStore: self))
-			}
+		let response = HTTPSClient.get(url: requestUrl, headers: headers)
+		
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			// status 201 == create new container
+			// status 202 == updated existing container
+			self.logger.info("Retrieved container [\(name)]")
+			return ObjectStoreContainer(name:name, url: requestUrl, objectStore: self)
 		}
 	}
 
@@ -145,30 +141,29 @@ public class ObjectStore {
 
 	- Parameter completionHandler: Closure to be executed once list of containeds is retrieved.
 	*/
-	public func retrieveContainersList(completionHandler:(error: ObjectStoreError?, containers: [ObjectStoreContainer]?) -> Void){
+	public func retrieveContainersList() throws -> [ObjectStoreContainer]{
 		logger.info("Retrieving containers list")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
-		HTTPSClient.get(url: projectEndpoint, headers: headers) { (error, data, status, headers) in
-			if let error = error {
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), containers: nil)
-			} else {
-				self.logger.info("Retrieved containers list")
-				var containersList = [ObjectStoreContainer]()
-				let responseData = String(data: data!, encoding: NSUTF8StringEncoding)!
-				#if os(Linux)
-					let containerNames = responseData.componentsSeparatedByString("\n")
-				#else
-					let containerNames = responseData.components(separatedBy: "\n")
-				#endif
-				for containerName:String in containerNames{
-					if containerName.characters.count == 0 {
-						continue
-					}
-					let containerUrl = Utils.generateObjectUrl(baseUrl: self.projectEndpoint, objectName: containerName)
-					containersList.append(ObjectStoreContainer(name:containerName, url: containerUrl, objectStore: self))
+		let response = HTTPSClient.get(url: projectEndpoint, headers: headers)
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Retrieved containers list")
+			var containersList = [ObjectStoreContainer]()
+			let responseData = String(data: response.data!, encoding: NSUTF8StringEncoding)!
+			#if os(Linux)
+				let containerNames = responseData.componentsSeparatedByString("\n")
+			#else
+				let containerNames = responseData.components(separatedBy: "\n")
+			#endif
+			for containerName:String in containerNames{
+				if containerName.characters.count == 0 {
+					continue
 				}
-				completionHandler(error: nil, containers: containersList)
+				let containerUrl = Utils.generateObjectUrl(baseUrl: self.projectEndpoint, objectName: containerName)
+				containersList.append(ObjectStoreContainer(name:containerName, url: containerUrl, objectStore: self))
 			}
+			return containersList
 		}
 	}
 
@@ -178,17 +173,18 @@ public class ObjectStore {
 	- Parameter name: The name of container to delete
 	- Parameter completionHandler: Closure to be executed once container is deleted.
 	*/
-	public func deleteContainer(name:String, completionHandler:(error: ObjectStoreError?) -> Void){
+	public func deleteContainer(name:String) throws {
 		logger.info( "Deleting container [\(name)]")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = Utils.generateObjectUrl(baseUrl: projectEndpoint, objectName: name)
-		HTTPSClient.delete(url: requestUrl, headers: headers) { (error, data, status, headers) in
-			if let error = error {
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-			} else {
-				self.logger.info("Deleted container [\(name)]")
-				completionHandler(error: nil)
-			}
+		let response = HTTPSClient.delete(url: requestUrl, headers: headers)
+ 
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			// status 201 == create new container
+			// status 202 == updated existing container
+			self.logger.info("Deleted container [\(name)]")
 		}
 	}
 
@@ -198,16 +194,15 @@ public class ObjectStore {
 	- Parameter metadata: a dictionary of metadata items, e.g. ["X-Account-Meta-Subject":"AmericanHistory"]. It is possible to supply multiple metadata items within same invocation. To delete a particular metadata item set it's value to an empty string, e.g. ["X-Account-Meta-Subject":""]. See Object Storage API v1 for more information about possible metadata items - http://developer.openstack.org/api-ref-objectstorage-v1.html
 	- Parameter completionHandler: Closure to be executed once metadata is updated.
 	*/
-	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler:(error:ObjectStoreError?) -> Void){
+	public func updateMetadata(metadata:Dictionary<String, String>) throws{
 		logger.info("Updating account metadata :: \(metadata)")
 		let headers = Utils.createHeaderDictionaryWithAuthToken(and: metadata)
-		HTTPSClient.post(url:projectEndpoint, headers: headers){(error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error))
-			} else {
-				self.logger.info("Account metadata updating")
-				completionHandler(error: nil)
-			}
+		let response = HTTPSClient.post(url:projectEndpoint, headers: headers)
+		
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Account metadata updated")
 		}
 	}
 
@@ -216,16 +211,15 @@ public class ObjectStore {
 
 	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
 	*/
-	public func retrieveMetadata(completionHandler:(error:ObjectStoreError?, metadata: Dictionary<String, String>?) -> Void) {
+	public func retrieveMetadata() throws -> Dictionary<String, String> {
 		logger.info("Retrieving account metadata")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
-		HTTPSClient.head(url:projectEndpoint, headers: headers){(error, data, status, headers) in
-			if let error = error{
-				completionHandler(error: ObjectStoreError.fromHttpError(error: error), metadata: nil)
-			} else {
-				self.logger.info("Metadata retrieved")
-				completionHandler(error: nil, metadata: headers)
-			}
+		let response = HTTPSClient.head(url:projectEndpoint, headers: headers)
+		if let error = response.error{
+			throw ObjectStoreError.fromHttpError(error: error)
+		} else {
+			self.logger.info("Metadata retrieved")
+			return headers
 		}
 	}
 }
