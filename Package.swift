@@ -16,5 +16,6 @@ import PackageDescription
 let package = Package(
     name: "BluemixObjectStore",
 	dependencies: [
+		.Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-httpsclient-swift.git", majorVersion: 0)
 	]
 )

@@ -14,42 +14,38 @@
 import Foundation
 
 internal class AuthorizationRequestBody {
-	private var dict = [:];
-	
-	private let emptyObj = "{}"
-	
+	private var body:String
+//	private let dict:Dictionary<String, AnyObject>
+
 	init(userId:String, password:String, projectId:String){
-		dict =
-			[
-				"auth":[
-					"identity":[
-						"methods":["password"],
-						"password":[
-							"user": [
-								"id":userId,
-								"password":password
-							]
-						]
-					],
-					"scope":[
-						"project":[
-							"id":projectId
-						]
-					]
-				]
-			]
+		body = "{ \"auth\": { \"identity\": { \"methods\": [ \"password\" ], \"password\": { \"user\": { \"id\": \"" + userId + "\", \"password\": \"" + password + "\" } } }, \"scope\": { \"project\": { \"id\": \"" + projectId + "\" } } } }"
+		
+//		dict =
+//			[
+//				"auth":[
+//					"identity":[
+//						"methods":["password"],
+//						"password":[
+//							"user": [
+//								"id":userId,
+//								"password":password
+//							]
+//						]
+//					],
+//					"scope":[
+//						"project":[
+//							"id":projectId
+//						]
+//					]
+//				]
+//			]
 	}
-	
+
 	func data() -> NSData {
-		do {
-			#if swift(>=3)
-				return try NSJSONSerialization.data(withJSONObject: dict, options: NSJSONWritingOptions.prettyPrinted)
-			#else
-				return try NSJSONSerialization.dataWithJSONObject(dict, options: NSJSONWritingOptions.PrettyPrinted)
-			#endif
-			
-		} catch {
-			return NSData()
-		}
+		#if os(Linux)
+			return body.dataUsingEncoding(NSUTF8StringEncoding)!
+		#else
+			return body.data(using:NSUTF8StringEncoding)!
+		#endif
 	}
 }

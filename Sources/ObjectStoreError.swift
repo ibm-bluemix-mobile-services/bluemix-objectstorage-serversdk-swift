@@ -12,45 +12,43 @@
 */
 
 import Foundation
+import BluemixHTTPSClient
 
 ///	Used to indicate various failure types that might occur during BMSObjectStore operations
-
-#if swift(>=3)
-public enum ObjectStoreError: ErrorProtocol {
+public enum ObjectStoreError: Int, ErrorProtocol {
 	/**
 		Indicates a failure during connection attempt. Since response and data is not available in this case an error message might be provided
-	
+
 		- Parameter message: An optional description of failure reason
 	*/
-	case ConnectionFailure(message:String?)
-	
+	case ConnectionFailure = 0
+
 	/// Indicates a resource not being available on server. Returned in case of HTTP 404 status
-	case NotFound
-	
+	case NotFound = 1
+
 	/// Indicates a missing authorization or authentication failure. Returned in case of HTTP 401 status
-	case Unauthorized
+	case Unauthorized = 2
 
 	/// Indicates an error reported by server. Retruned in cases of HTTP 4xx and 5xx statuses which are not handled separately
-	case ServerError
+	case ServerError = 3
+
+	case InvalidUri = 4
 	
+	public static func fromHttpError(error:HttpError) -> ObjectStoreError{
+		
+		switch error {
+		case HttpError.NotFound:
+			return ObjectStoreError.NotFound
+		case HttpError.ServerError:
+			return ObjectStoreError.ServerError
+		case HttpError.Unauthorized:
+			return ObjectStoreError.Unauthorized
+		case HttpError.InvalidUri:
+			return ObjectStoreError.InvalidUri
+		default:
+			return ObjectStoreError.ConnectionFailure
+		}
+		
+		
+	}
 }
-#else
-public enum ObjectStoreError: ErrorType {
-	/**
-	Indicates a failure during connection attempt. Since response and data is not available in this case an error message might be provided
-	
-	- Parameter message: An optional description of failure reason
-	*/
-	case ConnectionFailure(message:String?)
-	
-	/// Indicates a resource not being available on server. Returned in case of HTTP 404 status
-	case NotFound
-	
-	/// Indicates a missing authorization or authentication failure. Returned in case of HTTP 401 status
-	case Unauthorized
-	
-	/// Indicates an error reported by server. Retruned in cases of HTTP 4xx and 5xx statuses which are not handled separately
-	case ServerError
-	
-}
-#endif

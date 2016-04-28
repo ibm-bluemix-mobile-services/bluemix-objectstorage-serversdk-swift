@@ -1,56 +1,62 @@
 # BluemixObjectStore
 
-
-## Content
-
-This repository contains the Swift SDK for [IBM Object Store service on Bluemix](https://console.ng.bluemix.net/docs/services/ObjectStorage/index.html). The SDK is currently in early development stages and available for iOS, OSX and Linux platforms.
-
-Supported platforms are:
-
-* iOS 8+
-* OSX 10.11+
-* Swift 3 development snapshot 2016-04-12a
+[![Swift][swift-badge]][swift-url]
+[![Platform][platform-badge]][platform-url]
 
 ## Installation
-
-#### Cocoapods
-To install BluemixObjectStore using Cocoapods dependency manager add `pod 'BluemixObjectStore'` to your Podfile:
-
-```ruby
-use_frameworks!
-
-target 'your-target' do
-	pod 'BluemixObjectStore'
-end
-```
-
-#### Swift package manager
-To install BluemixObjectStore using Swift Package Manager add following dependency in your 'Package.swift' file
-
-```Swift
+```swift
 import PackageDescription
 
 let package = Package(
-    name: "MyApp",
-	dependencies: [
-        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-objectstore.git", majorVersion: 0)
-	]
+    dependencies: [
+        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstore-swift-sdk.git", majorVersion: 0)
+    ]
 )
+
+BluemixObjectStore was tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
+
+```
+## Setup
+
+The BluemixObjectStore uses BlubmixHTTPSClient, which has C dependencies. There's a basic one time setup you'll need to perform in order to get these C libraries on your machine, see https://github.com/ibm-bluemix-mobile-services/bluemix-httpsclient-swift for additional information.
+
+### Build on Linux
+
+```bash
+swift build
+export LD_LIBRARY_PATH=$(pwd)/.build/debug
 ```
 
-## API reference
+### Build on Mac:
 
-API docs are automatically generated from source code and available using this link - [http://cocoadocs.org/docsets/BluemixObjectStore](http://cocoadocs.org/docsets/BluemixObjectStore)
+```bash
+swift build -Xcc -I/usr/local/include -Xlinker -L/usr/local/lib
+swift build -Xcc -I/usr/local/include -Xlinker -L/usr/local/lib -X
+export LD_LIBRARY_PATH=$(pwd)/.build/debug
+```
+
+### Two things to note:
+
+1. Several internal dependencies will produce .so files that will be stored in the `.build/debug` folder once build is complete. Setting the `LD_LIBRARY_PATH` environment variable will ensure those .so files can be found.
+2. The last -X flag in the Mac build command will generate/update Xcode project you can use for development. You might want to omit it since it may override existing Xcode project you've previously created. In case you want to manually configure Xcode project to use C libraries add below values to the OpenSSL target Build Settings
+
+> Add `/usr/local/include` to User Header Search Paths
+>
+> Add `-L/usr/local/lib` to Other Linker Flags
+
+## Using on Bluemix
+
+TBD
 
 ## Usage
 
 Import the BluemixObjectStore framework to the classes you want to use it in
 
-```ruby
+```swift
 import BluemixObjectStore
 ```
 
-The BluemixObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to note is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below.
+The BluemixObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to keep in mind is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below.
 
 ### ObjectStore
 
@@ -176,6 +182,7 @@ container.storeObject(name: "object-name", data: data!) { (error, object) in
 	}
 }
 ```
+
 #### Retrieve an existing object
 
 ```swift
@@ -187,6 +194,7 @@ container.retrieveObject(name: "object-name"") { (error, object) in
 	}
 }
 ```
+
 #### Retrieve a list of existing objects
 
 ```swift
@@ -325,20 +333,11 @@ enum ObjectStoreError: ErrorType {
 	case NotFound
 }
 ```
-
-
 ## License
 
-Copyright 2016 IBM Corp.
+This project is released under the Apache-2.0 license
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+[swift-badge]: https://img.shields.io/badge/Swift-3.0-orange.svg
+[swift-url]: https://swift.org
+[platform-badge]: https://img.shields.io/badge/Platforms-OS%20X%20--%20Linux-lightgray.svg
+[platform-url]: https://swift.org

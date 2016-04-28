@@ -14,25 +14,41 @@
 import Foundation
 
 internal class Utils{
-	static func urlPathEncode(text:String) -> String{
-		#if swift(>=3)
-			return text.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed())!
-		#else
+	
+	internal static let X_AUTH_TOKEN = "X-Auth-Token"
+	internal static var authToken:String?
+	
+	static func urlPathEncode(text:String) -> String {
+		#if os(Linux)
 			return text.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet()) as String!
+		#else
+			return text.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed())!
 		#endif
+	}
+
+	static func generateObjectUrl(baseUrl:String, objectName:String) -> String{
+			return baseUrl + "/" + Utils.urlPathEncode(text: objectName)
 	}
 	
-	static func generateObjectUrl(baseUrl:String, objectName:String) -> String{
-		#if swift(>=3)
-			return baseUrl + "/" + Utils.urlPathEncode(text: objectName)
-		#else
-			return baseUrl + "/" + Utils.urlPathEncode(objectName)
-		#endif
+	static func createHeaderDictionaryWithAuthToken(and moreHeaders:[String:String]? = nil) -> [String:String]{
+		var headers:Dictionary<String, String> = [:]
+		if let authToken = authToken {
+			headers.updateValue(authToken, forKey: X_AUTH_TOKEN)
+		}
+
+		if let moreHeaders = moreHeaders {
+			for (key, value) in moreHeaders{
+				headers.updateValue(value, forKey: key)
+			}
+		}
+
+		return headers;
 	}
+	
 }
 
 /*
-#if swift(>=3)
+#if os(Linux)
 #else
 #endif
 */
