@@ -2,9 +2,9 @@ import Foundation
 import HTTPSClient
 
 class Tester{
-	let projectId = ""
-	let userId = ""
-	let password = ""
+	let projectId = "012689c20a5b4e5e9f9e5c4f363cd39d"
+	let userId = "beb8c3848a5b411293f3503a53d92bea"
+	let password = "G(7o40/NyWcCX,=C"
 	let authToken = ""
 	let containerName = "FileContainer"
 	//let objectName = "hello.txt"
@@ -14,7 +14,7 @@ class Tester{
 	func run() throws {
 		let objStore = ObjectStore(projectId: projectId)
 
-		try objStore.connect(userId: userId, password: password, region: region)
+		try objStore.retrieveAuthToken (userId: userId, password: password, region: region)
 		//try objStore.connect(authToken: authToken, region: region)
 		try objStore.updateMetadata(metadata: ["X-Account-Meta-Test":"X-Account-Meta-Text"])
 		let _ = try objStore.retrieveMetadata()
@@ -28,9 +28,10 @@ class Tester{
 	}
 }
 
+/*
 do {
 	try Tester().run();
 } catch{
 	print("Tester::exception")
 }
-//NSRunLoop.current().run()
+*/

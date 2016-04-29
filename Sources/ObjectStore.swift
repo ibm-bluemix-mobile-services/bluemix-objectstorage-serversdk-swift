@@ -45,27 +45,29 @@ public class ObjectStore {
 	}
 
 	/**
-	Connect to the IBM Object Store service using userId and password. Note that username and password are considered sensitive credentials and should only be accessible by trusted applications. If possible avoid exposing your IBM Object Store credentials directly to the mobile app and use authorization token instead.
+	Retrieve authToken from Identity Server
 
 	- Parameter userId: UserId provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
 	- Parameter password: Password provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
-	- Parameter region: Defines whether BMSObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
-	- Parameter completionHandler: Closure to be executed once connection is established
+	- Parameter region: Defines whether ObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	*/
-	public func connect(userId:String, password:String, region:String) throws {
+	public func retrieveAuthToken(userId:String, password:String, region:String) throws -> String{
 		let headers = ["Content-Type":"application/json"];
 		let authRequestBody = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId)
-		logger.info("Connecting to IBM ObjectStore")
+		logger.info("Retrieving authToken from Identity Server")
 		
 		let response = HTTPSClient.post(url: ObjectStore.TOKEN_ENDPOINT, headers: headers, data: authRequestBody.data())
-		if let error = response.error{
+		
+		if let error = response.error {
 			throw ObjectStoreError.fromHttpError(error: error)
+		} else if let authToken = response.allHeaderFields![ObjectStore.X_SUBJECT_TOKEN]{
+			self.logger.info("authToken Retrieved")
+			return authToken
 		} else {
-			self.logger.info("Connected to IBM ObjectStore")
-			Utils.authToken = response.allHeaderFields![ObjectStore.X_SUBJECT_TOKEN]
-			self.projectEndpoint = region + self.projectId
+			throw ObjectStoreError.FailedToRetrieveAuthToken
 		}
-
+//			Utils.authToken = response.allHeaderFields![ObjectStore.X_SUBJECT_TOKEN]
+//			self.projectEndpoint = region + self.projectId
 		// TODO: handle expiration
 		// let body = AuthorizationResponseBody(data:data!).json
 		// let expirationTimestamp = body["token"]["expires_at"].stringValue

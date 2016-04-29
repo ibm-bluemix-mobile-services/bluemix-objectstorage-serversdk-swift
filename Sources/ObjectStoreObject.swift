@@ -31,9 +31,9 @@ public class ObjectStoreObject{
 	private let logger:Logger
 
 	/**
-	Get cached object content. Requires `.load(shouldCache:true)` to be called previously
+	Retrieved object NSData
 	*/
-	var data:NSData? = nil
+	public var data:NSData? = nil
 
 	internal init(name:String, url: String, container:ObjectStoreContainer, data:NSData? = nil){
 		self.logger = Logger(forName:"ObjectStoreObject [\(container.name)]\\[\(name)]")

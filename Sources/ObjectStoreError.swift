@@ -32,7 +32,11 @@ public enum ObjectStoreError: Int, ErrorProtocol {
 	/// Indicates an error reported by server. Retruned in cases of HTTP 4xx and 5xx statuses which are not handled separately
 	case ServerError = 3
 
+	/// The Uri supplied to HttpClient is invalid
 	case InvalidUri = 4
+
+	/// Failed to parse Identity Server response and retrieve authToken
+	case FailedToRetrieveAuthToken = 5
 	
 	public static func fromHttpError(error:HttpError) -> ObjectStoreError{
 		
