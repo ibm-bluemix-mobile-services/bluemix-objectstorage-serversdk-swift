@@ -47,5 +47,6 @@ else
   tar xzvf $SWIFT_SNAPSHOT-$UBUNTU_VERSION.tar.gz
   export PATH=$WORK_DIR/$SWIFT_SNAPSHOT-$UBUNTU_VERSION/usr/bin:$PATH
   swiftc -h
+  apt-get install -y openssl openssl-dev
   cd -
 fi
