@@ -33,21 +33,21 @@ public class ObjectStoreObject{
 	/**
 	Get cached object content. Requires `.load(shouldCache:true)` to be called previously
 	*/
-	var cachedData:NSData? = nil
+	var data:NSData? = nil
 
-	internal init(name:String, url: String, container:ObjectStoreContainer){
+	internal init(name:String, url: String, container:ObjectStoreContainer, data:NSData? = nil){
 		self.logger = Logger(forName:"ObjectStoreObject [\(container.name)]\\[\(name)]")
 		self.name = name
 		self.url = url
 		self.container = container
+		self.data = data
 	}
 
-	/**
+	/*
 	Load the object content
 
 	- Parameter shouldCache: Defines whether object content loaded from IBM Object Store service will be cached by this ObjectStoreObject instance
 	- Parameter completionHandler: Closure to be executed once object is created
-	*/
 	public func load(shouldCache:Bool = false) throws -> NSData{
 		logger.info("Loading object")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
@@ -61,6 +61,7 @@ public class ObjectStoreObject{
 			return response.data!
 		}
 	}
+	*/
 
 	/**
 	Delete the object
@@ -87,13 +88,12 @@ public class ObjectStoreObject{
 		}
 	}
 
-	/**
+	/*
 	Retrieve object metadata. The metadata will be returned to a completionHandler as a Dictionary<String, String> instance with set of keys and values
 
 	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
-	*/
 	public func retrieveMetadata() throws ->  Dictionary<String, String>{
-		logger.info("Object metadata")
+		logger.info("Retrieving metadata")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let response = HTTPSClient.head(url: self.url, headers: headers)
 		
@@ -104,4 +104,5 @@ public class ObjectStoreObject{
 			return headers
 		}
 	}
+	*/
 }

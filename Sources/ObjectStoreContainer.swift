@@ -71,7 +71,7 @@ public class ObjectStoreContainer{
 			throw ObjectStoreError.fromHttpError(error: error)
 		} else {
 			self.logger.info("Retrieved object [\(name)]")
-			return ObjectStoreObject(name:name, url: requestUrl, container: self)
+			return ObjectStoreObject(name:name, url: requestUrl, container: self, data: response.bodyAsData)
 		}
 	}
 
@@ -91,11 +91,10 @@ public class ObjectStoreContainer{
 		} else {
 			self.logger.info("Retrieved objects list")
 			var objectsList = [ObjectStoreObject]()
-			let responseData = String(data: response.data!, encoding: NSUTF8StringEncoding)!
 			#if os(Linux)
-				let objectNames = responseData.componentsSeparatedByString("\n")
+				let objectNames = response.bodyAsString!.componentsSeparatedByString("\n")
 			#else
-				let objectNames = responseData.components(separatedBy: "\n")
+				let objectNames = response.bodyAsString!.components(separatedBy: "\n")
 			#endif
 			for objectName:String in objectNames{
 				if objectName.characters.count == 0 {

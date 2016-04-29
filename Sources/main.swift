@@ -11,26 +11,26 @@ class Tester{
 	let objectName = "photo1.jpg"
 	let region = ObjectStore.REGION_DALLAS
 
-	func run() throws -> AnyObject {
+	func run() throws {
 		let objStore = ObjectStore(projectId: projectId)
 
 		try objStore.connect(userId: userId, password: password, region: region)
 		//try objStore.connect(authToken: authToken, region: region)
-		//try objStore.updateMetadata(metadata: ["X-Account-Meta-Test":"X-Account-Meta-Text"])
-		//let _ = try objStore.retrieveMetadata()
+		try objStore.updateMetadata(metadata: ["X-Account-Meta-Test":"X-Account-Meta-Text"])
+		let _ = try objStore.retrieveMetadata()
 
 		let container = try objStore.retrieveContainer(name: containerName)
-		//try container.updateMetadata(metadata: ["X-Container-Meta-Test":"X-Container-Meta-Text"])
-		//let _ = try container.retrieveMetadata()
+		try container.updateMetadata(metadata: ["X-Container-Meta-Test":"X-Container-Meta-Text"])
+		let _ = try container.retrieveMetadata()
 
 		let object = try container.retrieveObject(name: objectName)
-		//try object.updateMetadata(metadata: ["X-Object-Meta-Test":"X-Object-Meta-Text"])
-		let _ = try object.retrieveMetadata()
-		//let objectData = try object.load()
-		print("ok")
-		return "ok"
+		print("ok :: \(object.data)")
 	}
 }
 
-let res = try? Tester().run();
+do {
+	try Tester().run();
+} catch{
+	print("Tester::exception")
+}
 //NSRunLoop.current().run()

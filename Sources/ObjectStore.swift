@@ -62,7 +62,7 @@ public class ObjectStore {
 			throw ObjectStoreError.fromHttpError(error: error)
 		} else {
 			self.logger.info("Connected to IBM ObjectStore")
-			Utils.authToken = response.headers![ObjectStore.X_SUBJECT_TOKEN]
+			Utils.authToken = response.allHeaderFields![ObjectStore.X_SUBJECT_TOKEN]
 			self.projectEndpoint = region + self.projectId
 		}
 
@@ -145,16 +145,15 @@ public class ObjectStore {
 		logger.info("Retrieving containers list")
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let response = HTTPSClient.get(url: projectEndpoint, headers: headers)
-		if let error = response.error{
+		if let error = response.error {
 			throw ObjectStoreError.fromHttpError(error: error)
 		} else {
 			self.logger.info("Retrieved containers list")
 			var containersList = [ObjectStoreContainer]()
-			let responseData = String(data: response.data!, encoding: NSUTF8StringEncoding)!
 			#if os(Linux)
-				let containerNames = responseData.componentsSeparatedByString("\n")
+				let containerNames = response.bodyAsString!.componentsSeparatedByString("\n")
 			#else
-				let containerNames = responseData.components(separatedBy: "\n")
+				let containerNames = response.bodyAsString!.components(separatedBy: "\n")
 			#endif
 			for containerName:String in containerNames{
 				if containerName.characters.count == 0 {
