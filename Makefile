@@ -22,8 +22,8 @@ UNAME = ${shell uname}
 
 
 ifeq ($(UNAME), Darwin)
-SWIFTC_FLAGS = -Xswiftc -I/usr/local/include
-LINKER_FLAGS = -Xlinker -L/usr/local/lib
+SWIFTC_FLAGS = -Xswiftc -I/usr/local/include -I/usr/local/opt/openssl/include
+LINKER_FLAGS = -Xlinker -L/usr/local/lib -L/usr/local/opt/openssl/lib
 endif
 
 ifeq ($(UNAME), Linux)
