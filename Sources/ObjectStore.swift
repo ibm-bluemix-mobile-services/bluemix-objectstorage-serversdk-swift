@@ -81,17 +81,18 @@ public class ObjectStore {
 	- Parameter completionHandler: Closure to be executed once connection is established
 	*/
 	public func connect(authToken:String, region:String) throws{
+		Utils.authToken = authToken
 		let headers = Utils.createHeaderDictionaryWithAuthToken()
 		let requestUrl = region + projectId
 		logger.info("Connecting to IBM ObjectStore")
-
+		
 		let response = HTTPSClient.get(url: requestUrl, headers: headers)
 		if let error = response.error{
+			Utils.authToken = nil
 			throw ObjectStoreError.fromHttpError(error: error)
 		} else {
 			self.logger.info("Connected to IBM ObjectStore")
 			self.projectEndpoint = region + self.projectId
-			Utils.authToken = authToken
 		}
 	}
 
