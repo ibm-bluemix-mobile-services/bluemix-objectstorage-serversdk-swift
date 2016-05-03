@@ -98,7 +98,7 @@ public class ObjectStoreObject{
 		logger.info("Retrieving metadata")
 		
 		let headers = Utils.createHeaderDictionary(authToken: container.objectStore.authTokenManager?.authToken)
-		HttpClient.get(resource: resource, headers: headers) { error, status, headers, data in
+		HttpClient.head(resource: resource, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStoreError.from(httpError: error), metadata: nil)
 			} else {

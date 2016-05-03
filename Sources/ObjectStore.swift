@@ -231,7 +231,7 @@ public class ObjectStore {
 			return completionHandler(error: ObjectStoreError.NotConnected, metadata: nil)
 		}
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
-		HttpClient.get(resource: projectResource!, headers: headers) { error, status, headers, data in
+		HttpClient.head(resource: projectResource!, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStoreError.from(httpError: error), metadata: nil)
 			} else {
