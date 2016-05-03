@@ -12,7 +12,6 @@
 */
 
 import Foundation
-import HTTPSClient
 /*
 class OLD_LinuxRequestManager: BaseRequestManager{
 	private let logger = Logger(name: "LinuxRequestManager")

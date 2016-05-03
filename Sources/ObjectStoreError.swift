@@ -12,7 +12,7 @@
 */
 
 import Foundation
-import BluemixHTTPSClient
+import SimpleHttpClient
 
 ///	Used to indicate various failure types that might occur during BMSObjectStore operations
 public enum ObjectStoreError: Int, ErrorProtocol {
@@ -37,10 +37,13 @@ public enum ObjectStoreError: Int, ErrorProtocol {
 
 	/// Failed to parse Identity Server response and retrieve authToken
 	case FailedToRetrieveAuthToken = 5
+
+	/// Object store not connected yet
+	case NotConnected = 6
 	
-	public static func fromHttpError(error:HttpError) -> ObjectStoreError{
+	public static func from(httpError:HttpError) -> ObjectStoreError{
 		
-		switch error {
+		switch httpError {
 		case HttpError.NotFound:
 			return ObjectStoreError.NotFound
 		case HttpError.ServerError:

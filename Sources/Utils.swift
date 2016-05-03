@@ -16,7 +16,6 @@ import Foundation
 internal class Utils{
 	
 	internal static let X_AUTH_TOKEN = "X-Auth-Token"
-	internal static var authToken:String?
 	
 	static func urlPathEncode(text:String) -> String {
 		#if os(Linux)
@@ -30,14 +29,14 @@ internal class Utils{
 			return baseUrl + "/" + Utils.urlPathEncode(text: objectName)
 	}
 	
-	static func createHeaderDictionaryWithAuthToken(and moreHeaders:[String:String]? = nil) -> [String:String]{
+	static func createHeaderDictionary(authToken:String?, additionalHeaders:[String:String]? = nil) -> [String:String]{
 		var headers:Dictionary<String, String> = [:]
 		if let authToken = authToken {
 			headers.updateValue(authToken, forKey: X_AUTH_TOKEN)
 		}
 
-		if let moreHeaders = moreHeaders {
-			for (key, value) in moreHeaders{
+		if let additionalHeaders = additionalHeaders {
+			for (key, value) in additionalHeaders{
 				headers.updateValue(value, forKey: key)
 			}
 		}

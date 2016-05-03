@@ -12,22 +12,20 @@
 */
 
 import Foundation
-import BluemixHTTPSClient
+import SimpleHttpClient
 import BluemixSimpleLogger
 
 /// ObjectStoreObject instance represents a single object in the IBM Object Store service. Use ObjectStoreObjects instance to load object content.
 public class ObjectStoreObject{
 
-	/**
-	Object instance name
-	*/
-	public let name:String!
+	/// Object name
+	public let name:String
 
-	/**
-	Object absolute URL
-	*/
-	public let url:String!
-	internal let container:ObjectStoreContainer!
+	/// Object resource
+	public let resource:HttpResourse
+
+	internal let container:ObjectStoreContainer
+	
 	private let logger:Logger
 
 	/**
@@ -35,13 +33,14 @@ public class ObjectStoreObject{
 	*/
 	public var data:NSData? = nil
 
-	internal init(name:String, url: String, container:ObjectStoreContainer, data:NSData? = nil){
+	internal init(name:String, resource: HttpResourse, container:ObjectStoreContainer, data:NSData? = nil){
 		self.logger = Logger(forName:"ObjectStoreObject [\(container.name)]\\[\(name)]")
 		self.name = name
-		self.url = url
+		self.resource = resource
 		self.container = container
 		self.data = data
 	}
+/*
 
 	/*
 	Load the object content
@@ -105,4 +104,5 @@ public class ObjectStoreObject{
 		}
 	}
 	*/
+*/
 }
