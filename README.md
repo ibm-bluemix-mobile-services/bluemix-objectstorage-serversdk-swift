@@ -12,10 +12,10 @@ let package = Package(
         .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstore-swift-sdk.git", majorVersion: 0, minor: 1)
     ]
 )
+```
 
 0.1.x releases of BluemixObjectStore are tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
 
-```
 
 ### Build on Linux
 
