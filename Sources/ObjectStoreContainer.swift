@@ -12,7 +12,7 @@
 */
 
 import Foundation
-import BluemixSimpleLogger
+import SimpleLogger
 import SimpleHttpClient
 
 /// ObjectStoreContainer instance represents a single container on IBM Object Store service
@@ -91,26 +91,29 @@ public class ObjectStoreContainer{
 		logger.info("Retrieving objects list")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
 		HttpClient.get(resource: resource, headers: headers) { error, status, headers, data in
-			self.logger.info("Retrieved objects list")
-			var objectsList = [ObjectStoreObject]()
-			
-			#if os(Linux)
-				let responseBodyString = String(data: data, encoding: NSUTF8StringEncoding)!
-				let objectNames = responseBodyString.componentsSeparatedByString("\n")
-			#else
+			if let error = error{
+				completionHandler(error: ObjectStoreError.from(httpError: error), objects: nil)
+			}else {
+				self.logger.info("Retrieved objects list")
+				var objectsList = [ObjectStoreObject]()
 				let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
-				let objectNames = responseBodyString.components(separatedBy: "\n")
-			#endif
-			
-			for objectName:String in objectNames{
-				if objectName.characters.count == 0 {
-					continue
+				
+				#if os(Linux)
+					let objectNames = responseBodyString.componentsSeparatedByString("\n")
+				#else
+					let objectNames = responseBodyString.components(separatedBy: "\n")
+				#endif
+				
+				for objectName:String in objectNames{
+					if objectName.characters.count == 0 {
+						continue
+					}
+					let objectResource = self.resource.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + objectName))
+					let object = ObjectStoreObject(name: objectName, resource: objectResource, container: self)
+					objectsList.append(object)
 				}
-				let objectResource = self.resource.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + objectName))
-				let object = ObjectStoreObject(name: objectName, resource: objectResource, container: self)
-				objectsList.append(object)
+				completionHandler(error: nil, objects: objectsList)
 			}
-			completionHandler(error: nil, objects: objectsList)
 
 		}
 

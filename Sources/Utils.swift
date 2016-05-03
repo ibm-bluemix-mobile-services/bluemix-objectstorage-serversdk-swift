@@ -25,10 +25,6 @@ internal class Utils{
 		#endif
 	}
 
-	static func generateObjectUrl(baseUrl:String, objectName:String) -> String{
-			return baseUrl + "/" + Utils.urlPathEncode(text: objectName)
-	}
-	
 	static func createHeaderDictionary(authToken:String?, additionalHeaders:[String:String]? = nil) -> [String:String]{
 		var headers:Dictionary<String, String> = [:]
 		if let authToken = authToken {

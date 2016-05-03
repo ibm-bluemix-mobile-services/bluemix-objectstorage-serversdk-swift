@@ -12,7 +12,7 @@
 */
 
 import Foundation
-import BluemixSimpleLogger
+import SimpleLogger
 import SimpleHttpClient
 
 /// Use ObjectStore instance to connect to IBM Object Store service and manage containers
@@ -142,12 +142,11 @@ public class ObjectStore {
 			} else {
 				self.logger.info("Retrieved containers list")
 				var containersList = [ObjectStoreContainer]()
+				let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
 				
 				#if os(Linux)
-					let responseBodyString = String(data: data, encoding: NSUTF8StringEncoding)!
 					let containerNames = responseBodyString.componentsSeparatedByString("\n")
 				#else
-					let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
 					let containerNames = responseBodyString.components(separatedBy: "\n")
 				#endif
 				

@@ -12,7 +12,7 @@
 */
 
 import Foundation
-import BluemixSimpleLogger
+import SimpleLogger
 import SimpleHttpClient
 
 internal class AuthTokenManager {
