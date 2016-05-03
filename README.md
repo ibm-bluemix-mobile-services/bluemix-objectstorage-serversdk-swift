@@ -9,40 +9,26 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstore-swift-sdk.git", majorVersion: 0)
+        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstore-swift-sdk.git", majorVersion: 0, minor: 1)
     ]
 )
 
-BluemixObjectStore was tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
+0.1.x releases of BluemixObjectStore are tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
 
 ```
-## Setup
-
-The BluemixObjectStore uses BlubmixHTTPSClient, which has C dependencies. There's a basic one time setup you'll need to perform in order to get these C libraries on your machine, see https://github.com/ibm-bluemix-mobile-services/bluemix-httpsclient-swift for additional information.
 
 ### Build on Linux
 
 ```bash
-swift build
-export LD_LIBRARY_PATH=$(pwd)/.build/debug
+sudo apt-get update
+swift build -Xcc -fblocks -Xlinker -ldispatch
 ```
 
 ### Build on Mac:
 
 ```bash
-swift build -Xcc -I/usr/local/include -Xlinker -L/usr/local/lib
-swift build -Xcc -I/usr/local/include -Xlinker -L/usr/local/lib -X
-export LD_LIBRARY_PATH=$(pwd)/.build/debug
+swift build
 ```
-
-### Two things to note:
-
-1. Several internal dependencies will produce .so files that will be stored in the `.build/debug` folder once build is complete. Setting the `LD_LIBRARY_PATH` environment variable will ensure those .so files can be found.
-2. The last -X flag in the Mac build command will generate/update Xcode project you can use for development. You might want to omit it since it may override existing Xcode project you've previously created. In case you want to manually configure Xcode project to use C libraries add below values to the OpenSSL target Build Settings
-
-> Add `/usr/local/include` to User Header Search Paths
->
-> Add `-L/usr/local/lib` to Other Linker Flags
 
 ## Using on Bluemix
 
@@ -55,8 +41,6 @@ Import the BluemixObjectStore framework to the classes you want to use it in
 ```swift
 import BluemixObjectStore
 ```
-
-The BluemixObjectStore SDK designed to be as stateless and lightweight as possible. Important thing to keep in mind is that object content is not loaded automatically when ObjectStoreObject instance is retrieved from ObjectStoreContainer. Loading object content should be done explicitly by calling .load() method of an ObjectStoreObject instance as described below.
 
 ### ObjectStore
 
@@ -74,20 +58,6 @@ objStore.connect(	userId: "your-service-userId",
 	} else {
 		print("connect success")
 	}							
-}
-```
-
-#### Connect to the IBM Object Store service using authToken
-
-```swift
-let objStore = ObjectStore(projectId:"your-project-id")
-objStore.connect(	authToken: "your-auth-token",
-					region: ObjectStore.REGION_DALLAS) { (error) in
-	if let error = error {
-		print("connect error :: \(error)")
-	} else {
-		print("connect success");
-	}
 }
 ```
 
@@ -164,7 +134,6 @@ objStore.retrieveMetadata { (error, metadata) in
 }
 ```
 
-
 ### ObjectStoreContainer
 
 Use `ObjectStoreContainer` instance to manage objects inside of particular container
@@ -172,9 +141,13 @@ Use `ObjectStoreContainer` instance to manage objects inside of particular conta
 #### Create a new object or update an existing one
 
 ```swift
-let str = "Hello World!"
+#if os(Linux)
+	let data = "testdata".dataUsingEncoding(NSUTF8StringEncoding)!
+#else
+	let data = "testdata".data(using: NSUTF8StringEncoding)!
+#endif
 let data = str.dataUsingEncoding(NSUTF8StringEncoding)
-container.storeObject(name: "object-name", data: data!) { (error, object) in
+container.storeObject(name: "object-name", data: data) { (error, object) in
 	if let error = error {
 		print("storeObject error :: \(error)")
 	} else {
@@ -267,21 +240,9 @@ object.load(shouldCache: false) { (error, data) in
 	if let error = error {
 		print("load error :: \(error)")
 	} else {
-		dispatch_async(dispatch_get_main_queue(), {
-			let imageView = UIImageView(image: UIImage(data: data!))
-			self.view.addSubview(imageView)
-		});
+		print("load success :: \(data)")
 	}
 }
-```
-
-#### Get cached object content
-
-```
-object.load(shouldCache: true) { (error, data) in ...... }
-
-let imageView = UIImageView(image: UIImage(data: object.cachedData!))
-self.view.addSubview(imageView)
 ```
 
 #### Delete the object
@@ -327,10 +288,13 @@ The `ObjectStoreError` is an enum with possible failure reasons
 
 ```swift
 enum ObjectStoreError: ErrorType {
-	case ConnectionFailure(message:String)
-	case AuthenticationError
-	case ServerError
+	case ConnectionFailure
 	case NotFound
+	case Unauthorized
+	case ServerError
+	case InvalidUri
+	case FailedToRetrieveAuthToken
+	case NotConnected
 }
 ```
 ## License
