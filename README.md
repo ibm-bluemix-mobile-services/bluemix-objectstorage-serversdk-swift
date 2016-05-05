@@ -1,4 +1,4 @@
-# BluemixObjectStore
+# BluemixObjectStorage
 
 [![Swift][swift-badge]][swift-url]
 [![Platform][platform-badge]][platform-url]
@@ -9,12 +9,12 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstore-swift-sdk.git", majorVersion: 0, minor: 1)
+        .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstorage-swift-sdk.git", majorVersion: 0, minor: 1)
     ]
 )
 ```
 
-0.1.x releases of BluemixObjectStore are tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
+0.1.x releases of BluemixObjectStorage are tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
 
 
 ### Build on Linux
@@ -36,23 +36,23 @@ TBD
 
 ## Usage
 
-Import the BluemixObjectStore framework to the classes you want to use it in
+Import the BluemixObjectStorage framework 
 
 ```swift
-import BluemixObjectStore
+import BluemixObjectStorage
 ```
 
-### ObjectStore
+### Objectstorage
 
-Use `ObjectStore` instance to connect to IBM Object Store service and manage containers.
+Use `ObjectStorage` instance to connect to IBM Object Storage service and manage containers.
 
-#### Connect to the IBM Object Store service using userId and password
+#### Connect to the IBM Object Storage service using userId and password
 
 ```swift
-let objStore = ObjectStore(projectId:"your-project-id")
-objStore.connect(	userId: "your-service-userId",
+let objstorage = ObjectStorage(projectId:"your-project-id")
+objstorage.connect(	userId: "your-service-userId",
  					password: "your-service-password",
-					region: ObjectStore.REGION_DALLAS) { (error) in
+					region: ObjectStorage.REGION_DALLAS) { (error) in
 	if let error = error {
 		print("connect error :: \(error)")
 	} else {
@@ -64,7 +64,7 @@ objStore.connect(	userId: "your-service-userId",
 #### Create a new container
 
 ```swift
-objStore.createContainer(name: "container-name") { (error, container) in
+objstorage.createContainer(name: "container-name") { (error, container) in
 	if let error = error {
 		print("createContainer error :: \(error)")
 	} else {
@@ -76,7 +76,7 @@ objStore.createContainer(name: "container-name") { (error, container) in
 #### Retrieve an existing container
 
 ```swift
-objStore.retrieveContainer(name: "container-name") { (error, container) in
+objstorage.retrieveContainer(name: "container-name") { (error, container) in
 	if let error = error {
 		print("retrieveContainer error :: \(error)")
 	} else {
@@ -88,7 +88,7 @@ objStore.retrieveContainer(name: "container-name") { (error, container) in
 #### Retrieve a list of existing containers
 
 ```swift
-objStore.retrieveContainersList { (error, containers) in
+objstorage.retrieveContainersList { (error, containers) in
 	if let error = error {
 		print("retrieveContainersList error :: \(error)")
 	} else {
@@ -100,7 +100,7 @@ objStore.retrieveContainersList { (error, containers) in
 #### Delete an existing container
 
 ```swift
-objStore.deleteContainer(name: "container-name") { (error) in
+objstorage.deleteContainer(name: "container-name") { (error) in
 	if let error = error {
 		print("deleteContainer error :: \(error)")
 	} else {
@@ -113,7 +113,7 @@ objStore.deleteContainer(name: "container-name") { (error) in
 
 ```swift
 let metadata:Dictionary<String, String> = ["X-Account-Meta-SomeName":"SomeValue"]
-objStore.updateMetadata(metadata: metadata) { (error) in
+objstorage.updateMetadata(metadata: metadata) { (error) in
 	if let error = error {
 		print("updateMetadata error :: \(error)")
 	} else {
@@ -125,7 +125,7 @@ objStore.updateMetadata(metadata: metadata) { (error) in
 #### Retrieve account metadata
 
 ```swift
-objStore.retrieveMetadata { (error, metadata) in
+objstorage.retrieveMetadata { (error, metadata) in
 	if let error = error {
 		print("retrieveMetadata error :: \(error)")
 	} else {
@@ -134,9 +134,9 @@ objStore.retrieveMetadata { (error, metadata) in
 }
 ```
 
-### ObjectStoreContainer
+### ObjectStorageContainer
 
-Use `ObjectStoreContainer` instance to manage objects inside of particular container
+Use `ObjectStorageContainer` instance to manage objects inside of particular container
 
 #### Create a new object or update an existing one
 
@@ -229,9 +229,9 @@ container.retrieveMetadata { (error, metadata) in
 }
 ```
 
-### ObjectStoreObject
+### ObjectStorageObject
 
-Use `ObjectStoreObjects` instance to load object content.
+Use `ObjectStorageObject` instance to load object content on demand
 
 #### Load the object content
 
@@ -282,12 +282,12 @@ object.retrieveMetadata { (error, metadata) in
 }
 ```
 
-### ObjectStoreError
+### ObjectStorageError
 
-The `ObjectStoreError` is an enum with possible failure reasons
+The `ObjectStorageError` is an enum with possible failure reasons
 
 ```swift
-enum ObjectStoreError: ErrorType {
+enum ObjectStorageError: ErrorType {
 	case ConnectionFailure
 	case NotFound
 	case Unauthorized
@@ -297,9 +297,10 @@ enum ObjectStoreError: ErrorType {
 	case NotConnected
 }
 ```
+
 ## License
 
-This project is released under the Apache-2.0 license
+This package contains sample code provided in source code form. The samples are licensed under the under the Apache License, Version 2.0 (the "License"). You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and may also view the license in the license.txt file within this package. Also see the notices.txt file within this package for additional notices.
 
 [swift-badge]: https://img.shields.io/badge/Swift-3.0-orange.svg
 [swift-url]: https://swift.org

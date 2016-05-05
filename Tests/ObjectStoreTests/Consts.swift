@@ -12,12 +12,13 @@
 */
 
 import Foundation
-import BluemixObjectStore
+import BluemixObjectStorage
+
 struct Consts{
 	static let projectId = ""
 	static let userId = ""
 	static let password = ""
-	static let region = ObjectStore.REGION_DALLAS
+	static let region = ObjectStorage.REGION_DALLAS
 
 	static let containerName = "testcontainer"
 	static let objectName = "testobject.txt"

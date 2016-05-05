@@ -15,7 +15,7 @@ import Foundation
 import SimpleHttpClient
 
 ///	Used to indicate various failure types that might occur during BMSObjectStore operations
-public enum ObjectStoreError: Int, ErrorProtocol {
+public enum ObjectStorageError: Int, ErrorProtocol {
 	/**
 		Indicates a failure during connection attempt. Since response and data is not available in this case an error message might be provided
 
@@ -41,19 +41,19 @@ public enum ObjectStoreError: Int, ErrorProtocol {
 	/// Object store not connected yet
 	case NotConnected = 6
 	
-	public static func from(httpError:HttpError) -> ObjectStoreError{
+	public static func from(httpError:HttpError) -> ObjectStorageError{
 		
 		switch httpError {
 		case HttpError.NotFound:
-			return ObjectStoreError.NotFound
+			return ObjectStorageError.NotFound
 		case HttpError.ServerError:
-			return ObjectStoreError.ServerError
+			return ObjectStorageError.ServerError
 		case HttpError.Unauthorized:
-			return ObjectStoreError.Unauthorized
+			return ObjectStorageError.Unauthorized
 		case HttpError.InvalidUri:
-			return ObjectStoreError.InvalidUri
+			return ObjectStorageError.InvalidUri
 		default:
-			return ObjectStoreError.ConnectionFailure
+			return ObjectStorageError.ConnectionFailure
 		}
 		
 		

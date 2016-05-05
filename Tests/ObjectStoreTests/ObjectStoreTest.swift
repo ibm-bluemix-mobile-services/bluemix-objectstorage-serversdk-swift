@@ -13,15 +13,19 @@
 
 import XCTest
 import Foundation
-@testable import BluemixObjectStore
+@testable import BluemixObjectStorage
 
 class ObjectStoreTests: XCTestCase {
 	var expecatation:XCTestExpectation?
 	
+	override func setUp() {
+		self.continueAfterFailure = false
+	}
+	
 	func testObjectStore(){
 		expecatation = expectation(withDescription: "doneExpectation")
 
-		let objStore = ObjectStore(projectId: Consts.projectId)
+		let objStore = ObjectStorage(projectId: Consts.projectId)
 		XCTAssertNotNil(objStore, "Failed to initialize ObjectStore")
 		XCTAssertEqual(objStore.projectId, Consts.projectId, "ObjectStore projectId is not equal to the one initialized with")
 		
@@ -36,7 +40,7 @@ class ObjectStoreTests: XCTestCase {
 		}
 	}
 	
-	func doTestUpdateMetadata(objStore: ObjectStore){
+	func doTestUpdateMetadata(objStore: ObjectStorage){
 		let metadata:Dictionary<String, String> = [Consts.accountMetadataTestName:Consts.metadataTestValue]
 		objStore.updateMetadata(metadata: metadata) { (error) in
 			XCTAssertNil(error, "error != nil")
@@ -44,7 +48,7 @@ class ObjectStoreTests: XCTestCase {
 		}
 	}
 	
-	func doTestRetrieveMetadata(objStore: ObjectStore){
+	func doTestRetrieveMetadata(objStore: ObjectStorage){
 		objStore.retrieveMetadata { (error, metadata) in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(metadata, "metadata == nil")
@@ -53,7 +57,7 @@ class ObjectStoreTests: XCTestCase {
 		}
 	}
 	
-	func doTestCreateContainer(objStore:ObjectStore){
+	func doTestCreateContainer(objStore:ObjectStorage){
 		objStore.createContainer(name: Consts.containerName) {(error, container) in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(container, "container == nil")
@@ -64,7 +68,7 @@ class ObjectStoreTests: XCTestCase {
 		}
 	}
 	
-	func doTestRetrieveContainer(objStore:ObjectStore){
+	func doTestRetrieveContainer(objStore:ObjectStorage){
 		objStore.retrieveContainer(name: Consts.containerName) { (error, container) in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(container, "container == nil")
@@ -75,7 +79,7 @@ class ObjectStoreTests: XCTestCase {
 		}
 	}
 	
-	func doTestRetrieveContainersList(objStore:ObjectStore){
+	func doTestRetrieveContainersList(objStore:ObjectStorage){
 		objStore.retrieveContainersList { (error, containers) in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(containers, "containers == nil")
@@ -89,7 +93,7 @@ class ObjectStoreTests: XCTestCase {
 	}
 
 
-	func doTestDeleteContainer(objStore:ObjectStore){
+	func doTestDeleteContainer(objStore:ObjectStorage){
 		objStore.deleteContainer(name: Consts.containerName) { (error) in
 			XCTAssertNil(error, "error != nil")
 			self.expecatation?.fulfill()

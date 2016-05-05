@@ -31,15 +31,15 @@ internal class AuthTokenManager {
 		self.password = password
 		self.projectId = projectId
 	}
-	
-	func refreshAuthToken(completionHandler:(error:ObjectStoreError?) -> Void){
+	 
+	func refreshAuthToken(completionHandler:(error: ObjectStorageError?) -> Void){
 		let headers = ["Content-Type":"application/json"];
 		let authRequestData = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId).data()
 		
 		logger.info("Retrieving authToken from Identity Server")
 		HttpClient.post(resource: AuthTokenManager.TOKEN_RESOURCE, headers: headers, data: authRequestData) { error, status, headers, data in
 			if let error = error {
-				completionHandler(error: ObjectStoreError.from(httpError: error))
+				completionHandler(error: ObjectStorageError.from(httpError: error))
 			} else {
 				self.logger.info("authToken Retrieved")
 				self.authToken = headers![AuthTokenManager.X_SUBJECT_TOKEN]

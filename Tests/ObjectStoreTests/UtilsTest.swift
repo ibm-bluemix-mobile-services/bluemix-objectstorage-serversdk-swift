@@ -13,7 +13,7 @@
 
 import XCTest
 import Foundation
-@testable import BluemixObjectStore
+@testable import BluemixObjectStorage
 
 class UtilsTests: XCTestCase {
 	func testUrlPathEncode(){

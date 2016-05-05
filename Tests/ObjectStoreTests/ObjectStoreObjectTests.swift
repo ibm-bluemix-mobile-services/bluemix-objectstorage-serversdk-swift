@@ -13,15 +13,19 @@
 
 import XCTest
 import Foundation
-@testable import BluemixObjectStore
+@testable import BluemixObjectStorage
 
 class ObjectStoreObjectTests: XCTestCase {
 	var expecatation:XCTestExpectation?
 	
+	override func setUp() {
+		self.continueAfterFailure = false
+	}
+
 	func testObjectStoreObject(){
 		expecatation = expectation(withDescription: "doneExpectation")
 		
-		let objStore = ObjectStore(projectId: Consts.projectId)
+		let objStore = ObjectStorage(projectId: Consts.projectId)
 		XCTAssertNotNil(objStore, "Failed to initialize ObjectStore")
 		XCTAssertEqual(objStore.projectId, Consts.projectId, "ObjectStore projectId is not equal to the one initialized with")
 		
@@ -36,7 +40,7 @@ class ObjectStoreObjectTests: XCTestCase {
 		}
 	}
 	
-	func doTestCreateContainer(objStore:ObjectStore){
+	func doTestCreateContainer(objStore:ObjectStorage){
 		objStore.createContainer(name: Consts.containerName) {(error, container) in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(container, "container == nil")
@@ -47,7 +51,7 @@ class ObjectStoreObjectTests: XCTestCase {
 		}
 	}
 	
-	func doTestStoreBigObject(container: ObjectStoreContainer){
+	func doTestStoreBigObject(container: ObjectStorageContainer){
 		let bigData = Consts.bigObjectData
 		print("bigObjectData.length == \(bigData.length)")
 		container.storeObject(name: Consts.objectName, data: bigData) { (error, object) in
@@ -61,7 +65,7 @@ class ObjectStoreObjectTests: XCTestCase {
 		}
 	}
 	
-	func doTestLoadBigObjectNoCaching(object: ObjectStoreObject){
+	func doTestLoadBigObjectNoCaching(object: ObjectStorageObject){
 		object.load(shouldCache: false) { error, data in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(data, "data == nil")
@@ -71,7 +75,7 @@ class ObjectStoreObjectTests: XCTestCase {
 		}
 	}
 	
-	func doTestLoadObjectWithCaching(object: ObjectStoreObject){
+	func doTestLoadObjectWithCaching(object: ObjectStorageObject){
 		object.load(shouldCache: true) { error, data in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(data, "data == nil")
@@ -81,7 +85,7 @@ class ObjectStoreObjectTests: XCTestCase {
 		}
 	}
 	
-	func doTestUpdateMetadata(object: ObjectStoreObject){
+	func doTestUpdateMetadata(object: ObjectStorageObject){
 		let metadata:Dictionary<String, String> = [Consts.objectMetadataTestName:Consts.metadataTestValue]
 		object.updateMetadata(metadata: metadata) {error in
 			XCTAssertNil(error, "error != nil")
@@ -89,7 +93,7 @@ class ObjectStoreObjectTests: XCTestCase {
 		}
 	}
 	
-	func doTestRetrieveMetadata(object: ObjectStoreObject){
+	func doTestRetrieveMetadata(object: ObjectStorageObject){
 		object.retrieveMetadata {error, metadata in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(metadata, "metadata == nil")
@@ -99,14 +103,14 @@ class ObjectStoreObjectTests: XCTestCase {
 	}
 	
 	
-	func doTestDeleteObject(object: ObjectStoreObject){
+	func doTestDeleteObject(object: ObjectStorageObject){
 		object.delete {error in
 			XCTAssertNil(error, "error != nil")
 			self.doTestDeleteContainer(container: object.container)
 		}
 	}
 	
-	func doTestDeleteContainer(container: ObjectStoreContainer){
+	func doTestDeleteContainer(container: ObjectStorageContainer){
 		container.delete {error in
 			XCTAssertNil(error, "error != nil")
 			self.expecatation?.fulfill()
