@@ -156,7 +156,7 @@ container.storeObject(name: "object-name", data: data) { (error, object) in
 #### Retrieve an existing object
 
 ```swift
-container.retrieveObject(name: "object-name"") { (error, object) in
+container.retrieveObject(name: "object-name") { (error, object) in
 	if let error = error {
 		print("retrieveObject error :: \(error)")
 	} else {
