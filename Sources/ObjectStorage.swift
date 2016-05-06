@@ -144,11 +144,7 @@ public class ObjectStorage {
 				var containersList = [ObjectStorageContainer]()
 				let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
 				
-				#if os(Linux)
-					let containerNames = responseBodyString.componentsSeparatedByString("\n")
-				#else
-					let containerNames = responseBodyString.components(separatedBy: "\n")
-				#endif
+				let containerNames = responseBodyString.components(separatedBy: "\n")
 				
 				for containerName:String in containerNames{
 					if containerName.characters.count == 0 {
