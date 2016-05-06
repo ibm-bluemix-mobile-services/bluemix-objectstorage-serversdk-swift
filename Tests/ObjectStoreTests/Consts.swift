@@ -28,11 +28,7 @@ struct Consts{
 	static let metadataTestValue = "testvalue"
 	static let testTimeout = 30.0
 	
-	#if os(Linux)
-		static let objectData = "testdata".dataUsingEncoding(NSUTF8StringEncoding)!
-	#else
-		static let objectData = "testdata".data(using: NSUTF8StringEncoding)!
-	#endif
+	static let objectData = "testdata".data(using: NSUTF8StringEncoding)!
 	
 	static var bigObjectData:NSData {
 		get {
@@ -40,12 +36,7 @@ struct Consts{
 			for _ in 1...17 {
 				str += str
 			}
-			#if os(Linux)
-				return str.dataUsingEncoding(NSUTF8StringEncoding)!
-			#else
-				return str.data(using: NSUTF8StringEncoding)!
-			#endif
+			return str.data(using: NSUTF8StringEncoding)!
 		}
 	}
-
 }
