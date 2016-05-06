@@ -10,6 +10,8 @@ import PackageDescription
 let package = Package(
     dependencies: [
         .Package(url: "https://github.com/ibm-bluemix-mobile-services/bluemix-objectstorage-swift-sdk.git", majorVersion: 0, minor: 3)
+	]
+)
 ```
 
 * 0.3.x releases were tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-05-03-a
