@@ -22,12 +22,12 @@ public class ObjectStorageContainer{
 	public let name:String
 
 	/// Container resource
-	public let resource:HttpResourse
+	public let resource:HttpResource
 
 	internal let objectStore:ObjectStorage
 	private let logger:Logger
 
-	internal init(name:String, resource: HttpResourse, objectStore:ObjectStorage){
+	internal init(name:String, resource: HttpResource, objectStore:ObjectStorage){
 		self.logger = Logger(forName:"ObjectStoreContainer [\(name)]")
 		self.name = name
 		self.resource = resource

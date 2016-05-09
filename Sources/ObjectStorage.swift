@@ -20,16 +20,16 @@ public class ObjectStorage {
 
 	/// Use this value in .connect(...)  methods to connect to Dallas instance of IBM Object Store
 	public static let REGION_DALLAS = "DALLAS"
-	public static let DALLAS_RESOURCE = HttpResourse(schema: "https", host: "dal.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
+	public static let DALLAS_RESOURCE = HttpResource(schema: "https", host: "dal.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
 
 	/// Use this value in .connect(...)  methods to connect to London instance of IBM Object Store
 	public static let REGION_LONDON = "LONDON"
-	public static let LONDON_RESOURCE = HttpResourse(schema: "https", host: "lon.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
+	public static let LONDON_RESOURCE = HttpResource(schema: "https", host: "lon.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
 
 	private let logger:Logger
 
 	internal var projectId:String! = ""
-	internal var projectResource: HttpResourse?
+	internal var projectResource: HttpResource?
 	internal var authTokenManager:AuthTokenManager?
 
 	/**

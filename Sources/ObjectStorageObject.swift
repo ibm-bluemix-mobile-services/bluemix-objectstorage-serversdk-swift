@@ -22,7 +22,7 @@ public class ObjectStorageObject{
 	public let name:String
 
 	/// Object resource
-	public let resource:HttpResourse
+	public let resource:HttpResource
 
 	internal let container:ObjectStorageContainer
 	
@@ -33,7 +33,7 @@ public class ObjectStorageObject{
 	*/
 	public var data:NSData? = nil
 
-	internal init(name:String, resource: HttpResourse, container:ObjectStorageContainer, data:NSData? = nil){
+	internal init(name:String, resource: HttpResource, container:ObjectStorageContainer, data:NSData? = nil){
 		self.logger = Logger(forName:"ObjectStoreObject [\(container.name)]\\[\(name)]")
 		self.name = name
 		self.resource = resource
