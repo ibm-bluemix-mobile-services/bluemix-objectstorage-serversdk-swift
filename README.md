@@ -3,7 +3,6 @@
 [![Swift][swift-badge]][swift-url]
 [![Platform][platform-badge]][platform-url]
 [![Build Status](https://travis-ci.org/ibm-bluemix-mobile-services/bluemix-objectstorage-swift-sdk.svg?branch=master)](https://travis-ci.org/ibm-bluemix-mobile-services/bluemix-objectstorage-swift-sdk)
-[![Build Status](https://travis-ci.org/ibm-bluemix-mobile-services/bluemix-objectstorage-swift-sdk.svg?branch=develop)](https://travis-ci.org/ibm-bluemix-mobile-services/bluemix-objectstorage-swift-sdk)
 
 ## Installation
 ```swift
