@@ -18,7 +18,7 @@ import SimpleHttpClient
 internal class AuthTokenManager {
 	private static let TOKEN_ENDPOINT = "https://identity.open.softlayer.com/v3/auth/tokens"
 	private static let TOKEN_RESOURCE = HttpResource(schema: "https", host: "identity.open.softlayer.com", port: "443", path: "/v3/auth/tokens")
-	private static let X_SUBJECT_TOKEN = "x-subject-token"
+	private static let X_SUBJECT_TOKEN = "X-Subject-Token"
 	private let logger = Logger.init(forName: "AuthTokenManager")
 	
 	var userId: String

@@ -22,9 +22,9 @@ struct Consts{
 
 	static let containerName = "testcontainer"
 	static let objectName = "testobject.txt"
-	static let accountMetadataTestName = "x-account-meta-test"
-	static let containerMetadataTestName = "x-container-meta-test"
-	static let objectMetadataTestName = "x-object-meta-test"
+	static let accountMetadataTestName = "X-Account-Meta-Test"
+	static let containerMetadataTestName = "X-Container-Meta-Test"
+	static let objectMetadataTestName = "X-Object-Meta-Test"
 	static let metadataTestValue = "testvalue"
 	static let testTimeout = 30.0
 	
