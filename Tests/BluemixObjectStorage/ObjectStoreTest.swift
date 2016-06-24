@@ -103,7 +103,7 @@ class ObjectStoreTests: XCTestCase {
 
 
 extension ObjectStoreTests {
-	static var allTests : [(String, ObjectStoreTests -> () throws -> Void)] {
+	static var allTests : [(String, (ObjectStoreTests) -> () throws -> Void)] {
 		return [
 		       	("testObjectStore", testObjectStore)
 		]

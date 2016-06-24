@@ -27,9 +27,9 @@ struct Consts{
 	static let objectMetadataTestName = "X-Object-Meta-Test"
 	static let metadataTestValue = "testvalue"
 	static let testTimeout = 30.0
-	
+
 	static let objectData = "testdata".data(using: NSUTF8StringEncoding)!
-	
+
 	static var bigObjectData:NSData {
 		get {
 			var str = "123456789 ";

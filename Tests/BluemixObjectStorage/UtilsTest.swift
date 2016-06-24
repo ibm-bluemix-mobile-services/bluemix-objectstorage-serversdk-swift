@@ -33,7 +33,7 @@ class UtilsTests: XCTestCase {
 
 
 extension UtilsTests {
-	static var allTests : [(String, UtilsTests -> () throws -> Void)] {
+	static var allTests : [(String, (UtilsTests) -> () throws -> Void)] {
 		return [
 		       	("testUrlPathEncode", testUrlPathEncode),
 		       	("testCreateHeaderDictionary", testCreateHeaderDictionary)

@@ -1,6 +1,9 @@
 import XCTest
-@testable import ObjectStoreTestsTestSuite
+@testable import BluemixObjectStorageTestSuite
 
 XCTMain([
-	testCase(ObjectStoreTests.allTests)
+	testCase(ObjectStoreTests.allTests),
+	testCase(ObjectStoreContainerTests.allTests),
+	testCase(ObjectStoreObjectTests.allTests),
+	testCase(UtilsTests.allTests)
 ])
