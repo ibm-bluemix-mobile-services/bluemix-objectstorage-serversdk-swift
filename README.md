@@ -14,22 +14,16 @@ let package = Package(
 	]
 )
 ```
-
+* 0.4.x releases were tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-06-06-a
 * 0.3.x releases were tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-05-03-a
 * 0.2.x releases were tested on OSX and Linux with DEVELOPMENT-SNAPSHOT-2016-04-25-a
 
 
-### Build on Linux
+### Build
 
 ```bash
-sudo apt-get update
-swift build -Xcc -fblocks -Xlinker -ldispatch
-```
-
-### Build on Mac:
-
-```bash
-swift build
+sudo apt-get update // not required on Mac
+swift build -Xcc -fblocks -Xlinker -rpath -Xlinker $(pwd)/.build/debug/
 ```
 
 ## Usage
