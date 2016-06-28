@@ -13,23 +13,23 @@
 
 import Foundation
 import SimpleLogger
-import SimpleHttpClient
 
 internal class AuthTokenManager {
-	private static let TOKEN_ENDPOINT = "https://identity.open.softlayer.com/v3/auth/tokens"
-	private static let TOKEN_RESOURCE = HttpResource(schema: "https", host: "identity.open.softlayer.com", port: "443", path: "/v3/auth/tokens")
+	private static let TOKEN_URL = Url(host: "identity.open.softlayer.com", path: "/v3/auth/tokens")
 	private static let X_SUBJECT_TOKEN = "X-Subject-Token"
 	private let logger = Logger.init(forName: "AuthTokenManager")
 	
+	let httpClient: HttpClientProtocol
 	var userId: String
 	var password: String
 	var projectId: String
 	var authToken: String?
 	
-	init(projectId: String, userId: String, password: String){
+	init(projectId: String, userId: String, password: String, httpClient: HttpClientProtocol){
 		self.userId = userId
 		self.password = password
 		self.projectId = projectId
+		self.httpClient = httpClient
 	}
 	 
 	func refreshAuthToken(completionHandler:(error: ObjectStorageError?) -> Void){
@@ -37,7 +37,7 @@ internal class AuthTokenManager {
 		let authRequestData = AuthorizationRequestBody(userId: userId, password: password, projectId: projectId).data()
 		
 		logger.info("Retrieving authToken from Identity Server")
-		HttpClient.post(resource: AuthTokenManager.TOKEN_RESOURCE, headers: headers, data: authRequestData) { error, status, headers, data in
+		httpClient.post(url: AuthTokenManager.TOKEN_URL, headers: headers, data: authRequestData) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error))
 			} else {

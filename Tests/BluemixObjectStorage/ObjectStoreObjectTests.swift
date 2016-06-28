@@ -26,6 +26,9 @@ class ObjectStoreObjectTests: XCTestCase {
 		expecatation = expectation(withDescription: "doneExpectation")
 		
 		let objStore = ObjectStorage(projectId: Consts.projectId)
+		if Consts.mockServer{
+			objStore.httpClient = MockServer_ObjectStorageTests()
+		}
 		XCTAssertNotNil(objStore, "Failed to initialize ObjectStore")
 		XCTAssertEqual(objStore.projectId, Consts.projectId, "ObjectStore projectId is not equal to the one initialized with")
 		
@@ -46,7 +49,7 @@ class ObjectStoreObjectTests: XCTestCase {
 			XCTAssertNotNil(container, "container == nil")
 			XCTAssertEqual(container?.name, Consts.containerName, "container.name != \(Consts.containerName)")
 			XCTAssertNotNil(container?.objectStore, "container.objectStore == nil")
-			XCTAssertNotNil(container?.resource, "container.resource == nil")
+			XCTAssertNotNil(container?.url, "url == nil")
 			self.doTestStoreBigObject(container: container!)
 		}
 	}
@@ -59,7 +62,7 @@ class ObjectStoreObjectTests: XCTestCase {
 			XCTAssertNotNil(object, "object == nil")
 			XCTAssertEqual(object?.name, Consts.objectName, "object.name != \(Consts.objectName)")
 			XCTAssertNotNil(object?.container, "object.container == nil")
-			XCTAssertNotNil(object?.resource, "object.resource == nil")
+			XCTAssertNotNil(object?.url, "url == nil")
 			XCTAssertEqual(object?.data, bigData, "object.data != Consts.bigObjectData")
 			self.doTestLoadBigObjectNoCaching(object: object!)
 		}
