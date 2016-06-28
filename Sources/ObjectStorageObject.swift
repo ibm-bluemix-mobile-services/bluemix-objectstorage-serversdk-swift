@@ -22,10 +22,9 @@ public class ObjectStorageObject{
 	public let name:String
 
 	/// Object resource
-	public let resource:HttpResource
-
+	internal let url: Url
 	internal let container:ObjectStorageContainer
-	
+	private let httpClient:HttpClientProtocol
 	private let logger:Logger
 
 	/**
@@ -33,12 +32,13 @@ public class ObjectStorageObject{
 	*/
 	public var data:NSData? = nil
 
-	internal init(name:String, resource: HttpResource, container:ObjectStorageContainer, data:NSData? = nil){
+	internal init(name:String, url: Url, container:ObjectStorageContainer, data:NSData? = nil){
 		self.logger = Logger(forName:"ObjectStoreObject [\(container.name)]\\[\(name)]")
 		self.name = name
-		self.resource = resource
+		self.url = url
 		self.container = container
 		self.data = data
+		self.httpClient = container.objectStore.httpClient
 	}
 
 	/*
@@ -50,7 +50,7 @@ public class ObjectStorageObject{
 	public func load(shouldCache:Bool = false, completionHandler:(error:ObjectStorageError?, data:NSData?)->Void){
 		logger.info("Loading object")
 		let headers = Utils.createHeaderDictionary(authToken: container.objectStore.authTokenManager?.authToken)
-		HttpClient.get(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.get(url: self.url, headers: headers) { error, status, headers, data in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), data: nil)
 			} else {
@@ -79,7 +79,7 @@ public class ObjectStorageObject{
 		
 		let headers = Utils.createHeaderDictionary(authToken: container.objectStore.authTokenManager?.authToken, additionalHeaders: metadata)
 		
-		HttpClient.post(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.post(url: self.url, headers: headers, data: nil) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error:ObjectStorageError.from(httpError: error))
 			} else {
@@ -98,7 +98,7 @@ public class ObjectStorageObject{
 		logger.info("Retrieving metadata")
 		
 		let headers = Utils.createHeaderDictionary(authToken: container.objectStore.authTokenManager?.authToken)
-		HttpClient.head(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.head(url: self.url, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), metadata: nil)
 			} else {

@@ -22,16 +22,17 @@ public class ObjectStorageContainer{
 	public let name:String
 
 	/// Container resource
-	public let resource:HttpResource
-
+	internal let url: Url
 	internal let objectStore:ObjectStorage
 	private let logger:Logger
+	private let httpClient: HttpClientProtocol
 
-	internal init(name:String, resource: HttpResource, objectStore:ObjectStorage){
+	internal init(name:String, url: Url, objectStore:ObjectStorage){
 		self.logger = Logger(forName:"ObjectStoreContainer [\(name)]")
 		self.name = name
-		self.resource = resource
+		self.url = url
 		self.objectStore = objectStore
+		self.httpClient = objectStore.httpClient
 	}
 
 	/**
@@ -44,14 +45,14 @@ public class ObjectStorageContainer{
 	public func storeObject(name:String, data:NSData, completionHandler: (error: ObjectStorageError?, object: ObjectStorageObject?)->Void){
 		logger.info("Storing object [\(name)]")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
-		let resource = self.resource.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + name))
+		let url = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
 		
-		HttpClient.put(resource: resource, headers: headers, data: data) { error, status, headers, responseData in
+		httpClient.put(url: url, headers: headers, data: data) { error, status, headers, responseData in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), object: nil)
 			} else {
 				self.logger.info("Stored object [\(name)]")
-				let object = ObjectStorageObject(name: name, resource: resource, container: self, data: data)
+				let object = ObjectStorageObject(name: name, url: url, container: self, data: data)
 				completionHandler(error: nil, object: object)
 			}
 		}
@@ -68,14 +69,14 @@ public class ObjectStorageContainer{
 	public func retrieveObject(name:String, completionHandler: (error: ObjectStorageError?, object: ObjectStorageObject?)->Void){
 		logger.info("Retrieving object [\(name)]")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
-		let resource = self.resource.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + name))
+		let url = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
 		
-		HttpClient.get(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.get(url: url, headers: headers) { error, status, headers, data in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), object: nil)
 			} else {
 				self.logger.info("Retrieved object [\(name)]")
-				let object = ObjectStorageObject(name: name, resource: resource, container: self, data: data)
+				let object = ObjectStorageObject(name: name, url: url, container: self, data: data)
 				completionHandler(error: nil, object: object)
 			}
 		}
@@ -90,7 +91,7 @@ public class ObjectStorageContainer{
 	public func retrieveObjectsList(completionHandler: (error: ObjectStorageError?, objects: [ObjectStorageObject]?)->Void){
 		logger.info("Retrieving objects list")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
-		HttpClient.get(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.get(url: self.url, headers: headers) { error, status, headers, data in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), objects: nil)
 			}else {
@@ -104,8 +105,8 @@ public class ObjectStorageContainer{
 					if objectName.characters.count == 0 {
 						continue
 					}
-					let objectResource = self.resource.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + objectName))
-					let object = ObjectStorageObject(name: objectName, resource: objectResource, container: self)
+					let objectUrl = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + objectName))
+					let object = ObjectStorageObject(name: objectName, url: objectUrl, container: self)
 					objectsList.append(object)
 				}
 				completionHandler(error: nil, objects: objectsList)
@@ -124,9 +125,9 @@ public class ObjectStorageContainer{
 	public func deleteObject(name: String, completionHandler: (error:ObjectStorageError?) -> Void){
 		logger.info("Deleting object [\(name)]")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
-		let resource = self.resource.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + name))
+		let url = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
 		
-		HttpClient.delete(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.delete(url: url, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error))
 			} else {
@@ -156,7 +157,7 @@ public class ObjectStorageContainer{
 		
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken, additionalHeaders: metadata)
 		
-		HttpClient.post(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.post(url: self.url, headers: headers, data:nil) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error:ObjectStorageError.from(httpError: error))
 			} else {
@@ -176,7 +177,7 @@ public class ObjectStorageContainer{
 		logger.info("Retrieving metadata")
 		
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
-		HttpClient.head(resource: resource, headers: headers) { error, status, headers, data in
+		httpClient.head(url: self.url, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), metadata: nil)
 			} else {

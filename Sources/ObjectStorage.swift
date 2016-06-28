@@ -13,24 +13,27 @@
 
 import Foundation
 import SimpleLogger
-import SimpleHttpClient
 
 /// Use ObjectStore instance to connect to IBM Object Store service and manage containers
 public class ObjectStorage {
 
 	/// Use this value in .connect(...)  methods to connect to Dallas instance of IBM Object Store
 	public static let REGION_DALLAS = "DALLAS"
-	public static let DALLAS_RESOURCE = HttpResource(schema: "https", host: "dal.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
+	//public static let DALLAS_RESOURCE = HttpResource(schema: "https", host: "dal.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
+	internal static let DALLAS_URL = Url(host: "dal.objectstorage.open.softlayer.com", path: "/v1/AUTH_")
 
 	/// Use this value in .connect(...)  methods to connect to London instance of IBM Object Store
 	public static let REGION_LONDON = "LONDON"
-	public static let LONDON_RESOURCE = HttpResource(schema: "https", host: "lon.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
+//	public static let LONDON_RESOURCE = HttpResource(schema: "https", host: "lon.objectstorage.open.softlayer.com", port: "443", path: "/v1/AUTH_")
+	internal static let LONDON_URL = Url(host: "lon.objectstorage.open.softlayer.com", path: "/v1/AUTH_")
+
 
 	private let logger:Logger
 
 	internal var projectId:String! = ""
-	internal var projectResource: HttpResource?
+	internal var projectUrl: Url?
 	internal var authTokenManager:AuthTokenManager?
+	internal var httpClient: HttpClientProtocol
 
 	/**
 	Initialize ObjectStore by supplying projectId and optionally requestManager
@@ -40,6 +43,7 @@ public class ObjectStorage {
 	public init(projectId:String){
 		self.projectId = projectId
 		logger = Logger(forName:"ObjectStore [\(self.projectId)]")
+		self.httpClient = HttpClient()
 	}
 
 	/**
@@ -50,15 +54,14 @@ public class ObjectStorage {
 	- Parameter region: Defines whether ObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	*/
 	public func connect(userId:String, password:String, region:String, completionHandler:(error: ObjectStorageError?) -> Void) {
-		self.authTokenManager = AuthTokenManager(projectId: projectId, userId: userId, password: password)
+		self.authTokenManager = AuthTokenManager(projectId: projectId, userId: userId, password: password, httpClient: httpClient)
 		
 		authTokenManager?.refreshAuthToken { (error) in
 			if error != nil {
 				completionHandler(error: ObjectStorageError.FailedToRetrieveAuthToken)
 			} else {
-				self.projectResource = (region == ObjectStorage.REGION_DALLAS) ?
-					ObjectStorage.DALLAS_RESOURCE.resourceByAddingPathComponent(pathComponent: self.projectId) :
-					ObjectStorage.LONDON_RESOURCE.resourceByAddingPathComponent(pathComponent: self.projectId)
+				self.projectUrl = (region == ObjectStorage.REGION_DALLAS) ? ObjectStorage.DALLAS_URL : ObjectStorage.LONDON_URL
+				self.projectUrl = self.projectUrl?.urlByAdding(pathComponent: self.projectId)
 				completionHandler(error: nil)
 			}
 		}
@@ -73,20 +76,20 @@ public class ObjectStorage {
 	public func createContainer(name:String, completionHandler: (error:ObjectStorageError?, container: ObjectStorageContainer?) -> Void){
 		logger.info("Creating container [\(name)]")
 		
-		guard projectResource != nil else{
+		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, container: nil)
 		}
 		
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
-		let resource = self.projectResource?.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + name))
+		let url = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
 		
-		HttpClient.put(resource: resource!, headers: headers) { error, status, headers, data in
+		httpClient.put(url: url!, headers: headers, data: nil) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), container: nil)
 			} else {
 				self.logger.info("Created container [\(name)]")
-				let container = ObjectStorageContainer(name: name, resource: resource!, objectStore: self)
+				let container = ObjectStorageContainer(name: name, url: url!, objectStore: self)
 				completionHandler(error: nil, container: container)
 			}
 		}
@@ -102,20 +105,20 @@ public class ObjectStorage {
 	public func retrieveContainer(name:String, completionHandler: (error:ObjectStorageError?, container: ObjectStorageContainer?) -> Void){
 		logger.info("Retrieving container [\(name)]")
 		
-		guard projectResource != nil else{
+		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, container: nil)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
-		let resource = self.projectResource?.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + name))
+		let url = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
 		
-		HttpClient.get(resource: resource!, headers: headers) { error, status, headers, data in
+		httpClient.get(url: url!, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), container: nil)
 			} else {
 				self.logger.info("Retrieved container [\(name)]")
-				let container = ObjectStorageContainer(name: name, resource: resource!, objectStore: self)
+				let container = ObjectStorageContainer(name: name, url: url!, objectStore: self)
 				completionHandler(error: nil, container: container)
 			}
 		}
@@ -129,14 +132,14 @@ public class ObjectStorage {
 	public func retrieveContainersList(completionHandler: (error:ObjectStorageError?, containers: [ObjectStorageContainer]?) -> Void){
 		logger.info("Retrieving containers list")
 		
-		guard projectResource != nil else{
+		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, containers: nil)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
 		
-		HttpClient.get(resource: projectResource!, headers: headers) {error, status, headers, data in
+		httpClient.get(url: self.projectUrl!, headers: headers) {error, status, headers, data in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), containers: nil)
 			} else {
@@ -150,8 +153,8 @@ public class ObjectStorage {
 					if containerName.characters.count == 0 {
 						continue
 					}
-					let containerResource = self.projectResource?.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + containerName))
-					let container = ObjectStorageContainer(name: containerName, resource: containerResource!, objectStore: self)
+					let containerUrl = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + containerName))
+					let container = ObjectStorageContainer(name: containerName, url: containerUrl!, objectStore: self)
 					containersList.append(container)
 				}
 				completionHandler(error: nil, containers: containersList)
@@ -168,15 +171,15 @@ public class ObjectStorage {
 	public func deleteContainer(name:String, completionHandler: (error:ObjectStorageError?) -> Void){
 		logger.info("Deleting container [\(name)]")
 
-		guard projectResource != nil else{
+		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
-		let resource = self.projectResource?.resourceByAddingPathComponent(pathComponent: Utils.urlPathEncode(text: "/" + name))
+		let url = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
 		
-		HttpClient.delete(resource: resource!, headers: headers) { error, status, headers, data in
+		httpClient.delete(url: url!, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error))
 			} else {
@@ -196,14 +199,14 @@ public class ObjectStorage {
 	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler: (error:ObjectStorageError?) -> Void){
 		logger.info("Updating metadata :: \(metadata)")
 		
-		guard projectResource != nil else{
+		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken, additionalHeaders: metadata)
 
-		HttpClient.post(resource: projectResource!, headers: headers) { error, status, headers, data in
+		httpClient.post(url: self.projectUrl!, headers: headers, data: nil) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error:ObjectStorageError.from(httpError: error))
 			} else {
@@ -222,12 +225,12 @@ public class ObjectStorage {
 	public func retrieveMetadata(completionHandler: (error: ObjectStorageError?, metadata: [String:String]?) -> Void) {
 		logger.info("Retrieving metadata")
 		
-		guard projectResource != nil else{
+		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, metadata: nil)
 		}
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
-		HttpClient.head(resource: projectResource!, headers: headers) { error, status, headers, data in
+		httpClient.head(url: self.projectUrl!, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), metadata: nil)
 			} else {

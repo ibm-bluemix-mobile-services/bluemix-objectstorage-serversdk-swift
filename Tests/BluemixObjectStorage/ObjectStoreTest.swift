@@ -26,6 +26,11 @@ class ObjectStoreTests: XCTestCase {
 		expecatation = expectation(withDescription: "doneExpectation")
 
 		let objStore = ObjectStorage(projectId: Consts.projectId)
+		if Consts.mockServer{
+			objStore.httpClient = MockServer_ObjectStorageTests()
+		}
+		
+		
 		XCTAssertNotNil(objStore, "Failed to initialize ObjectStore")
 		XCTAssertEqual(objStore.projectId, Consts.projectId, "ObjectStore projectId is not equal to the one initialized with")
 		
@@ -63,7 +68,7 @@ class ObjectStoreTests: XCTestCase {
 			XCTAssertNotNil(container, "container == nil")
 			XCTAssertEqual(container?.name, Consts.containerName, "container.name != \(Consts.containerName)")
 			XCTAssertNotNil(container?.objectStore, "container.objectStore == nil")
-			XCTAssertNotNil(container?.resource, "container.resource == nil")
+			XCTAssertNotNil(container?.url, "container?.url == nil")
 			self.doTestRetrieveContainer(objStore: objStore)
 		}
 	}
@@ -74,7 +79,7 @@ class ObjectStoreTests: XCTestCase {
 			XCTAssertNotNil(container, "container == nil")
 			XCTAssertEqual(container?.name, Consts.containerName, "container.name != \(Consts.containerName)")
 			XCTAssertNotNil(container?.objectStore, "container.objectStore == nil")
-			XCTAssertNotNil(container?.resource, "container.resource == nil")
+			XCTAssertNotNil(container?.url, "container?.url == nil")
 			self.doTestRetrieveContainersList(objStore: objStore)
 		}
 	}
@@ -87,7 +92,7 @@ class ObjectStoreTests: XCTestCase {
 			XCTAssertGreaterThan(Int(containers!.count), Int(0), "containers.count <= 0")
 			let container = containers![0]
 			XCTAssertNotNil(container.objectStore, "container.objectStore == nil")
-			XCTAssertNotNil(container.resource, "container.resource == nil")
+			XCTAssertNotNil(container.url, "container?.url == nil")
 			self.doTestDeleteContainer(objStore: objStore)
 		}
 	}

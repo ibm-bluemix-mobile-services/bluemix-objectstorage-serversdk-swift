@@ -17,8 +17,8 @@ import Foundation
 
 class UtilsTests: XCTestCase {
 	func testUrlPathEncode(){
-		let encoded = Utils.urlPathEncode(text: "a b c d привет")
-		XCTAssertEqual(encoded, "a%20b%20c%20d%20%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82")
+		let encoded = Utils.urlPathEncode(text: "a b c d")
+		XCTAssertEqual(encoded, "a%20b%20c%20d")
 	}
 	
 	func testCreateHeaderDictionary(){

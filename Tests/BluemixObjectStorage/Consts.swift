@@ -15,6 +15,7 @@ import Foundation
 import BluemixObjectStorage
 
 struct Consts{
+	static let mockServer = true
 	static let projectId = ""
 	static let userId = ""
 	static let password = ""
