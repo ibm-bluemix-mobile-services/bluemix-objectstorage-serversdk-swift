@@ -16,12 +16,16 @@ import Foundation
 import SimpleHttpClient
 
 public class MockServer_ObjectStorageTests: HttpClientProtocol{
-	
+
 	var storedData:NSData?
-	
+
 	func get(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
 		let pathComponents = url.path.components(separatedBy: "/")
-		
+
+		#if os(OSX)
+			let NSUTF8StringEncoding = String.Encoding.utf8;
+		#endif
+
 		// Get list of objects in container
 		if (pathComponents.count == 4 && pathComponents[3] == Consts.containerName){
 			let objectsList = Consts.objectName + "\n" + Consts.objectName;

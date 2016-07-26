@@ -55,7 +55,7 @@ public class ObjectStorage {
 	*/
 	public func connect(userId:String, password:String, region:String, completionHandler:(error: ObjectStorageError?) -> Void) {
 		self.authTokenManager = AuthTokenManager(projectId: projectId, userId: userId, password: password, httpClient: httpClient)
-		
+
 		authTokenManager?.refreshAuthToken { (error) in
 			if error != nil {
 				completionHandler(error: ObjectStorageError.FailedToRetrieveAuthToken)
@@ -66,7 +66,7 @@ public class ObjectStorage {
 			}
 		}
 	}
-	
+
 	/**
 	Create a new container
 
@@ -75,15 +75,15 @@ public class ObjectStorage {
 	*/
 	public func createContainer(name:String, completionHandler: (error:ObjectStorageError?, container: ObjectStorageContainer?) -> Void){
 		logger.info("Creating container [\(name)]")
-		
+
 		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, container: nil)
 		}
-		
+
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
 		let url = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
-		
+
 		httpClient.put(url: url!, headers: headers, data: nil) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), container: nil)
@@ -104,7 +104,7 @@ public class ObjectStorage {
 	*/
 	public func retrieveContainer(name:String, completionHandler: (error:ObjectStorageError?, container: ObjectStorageContainer?) -> Void){
 		logger.info("Retrieving container [\(name)]")
-		
+
 		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, container: nil)
@@ -112,7 +112,7 @@ public class ObjectStorage {
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
 		let url = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
-		
+
 		httpClient.get(url: url!, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error), container: nil)
@@ -131,24 +131,29 @@ public class ObjectStorage {
 	*/
 	public func retrieveContainersList(completionHandler: (error:ObjectStorageError?, containers: [ObjectStorageContainer]?) -> Void){
 		logger.info("Retrieving containers list")
-		
+
 		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, containers: nil)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
-		
+
 		httpClient.get(url: self.projectUrl!, headers: headers) {error, status, headers, data in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), containers: nil)
 			} else {
 				self.logger.info("Retrieved containers list")
 				var containersList = [ObjectStorageContainer]()
-				let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
-				
+
+				#if os(Linux)
+					let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
+				#else
+					let responseBodyString = String(data: data as! Data, encoding: String.Encoding.utf8)!
+				#endif
+
 				let containerNames = responseBodyString.components(separatedBy: "\n")
-				
+
 				for containerName:String in containerNames{
 					if containerName.characters.count == 0 {
 						continue
@@ -178,7 +183,7 @@ public class ObjectStorage {
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
 		let url = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
-		
+
 		httpClient.delete(url: url!, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error))
@@ -188,7 +193,7 @@ public class ObjectStorage {
 			}
 		}
 	}
-	
+
 
 	/**
 	Update account metadata
@@ -198,7 +203,7 @@ public class ObjectStorage {
 	*/
 	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler: (error:ObjectStorageError?) -> Void){
 		logger.info("Updating metadata :: \(metadata)")
-		
+
 		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected)
@@ -224,7 +229,7 @@ public class ObjectStorage {
 	*/
 	public func retrieveMetadata(completionHandler: (error: ObjectStorageError?, metadata: [String:String]?) -> Void) {
 		logger.info("Retrieving metadata")
-		
+
 		guard self.projectUrl != nil else{
 			logger.error(String(ObjectStorageError.NotConnected))
 			return completionHandler(error: ObjectStorageError.NotConnected, metadata: nil)
@@ -240,4 +245,3 @@ public class ObjectStorage {
 		}
 	}
 }
-

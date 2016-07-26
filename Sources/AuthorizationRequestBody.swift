@@ -19,7 +19,7 @@ internal class AuthorizationRequestBody {
 
 	init(userId:String, password:String, projectId:String){
 		body = "{ \"auth\": { \"identity\": { \"methods\": [ \"password\" ], \"password\": { \"user\": { \"id\": \"" + userId + "\", \"password\": \"" + password + "\" } } }, \"scope\": { \"project\": { \"id\": \"" + projectId + "\" } } } }"
-		
+
 //		dict =
 //			[
 //				"auth":[
@@ -42,6 +42,10 @@ internal class AuthorizationRequestBody {
 	}
 
 	func data() -> NSData {
-		return body.data(using:NSUTF8StringEncoding)!
+		#if os(Linux)
+			return body.data(using:NSUTF8StringEncoding)!
+		#else
+			return body.data(using:String.Encoding.utf8)!
+		#endif
 	}
 }
