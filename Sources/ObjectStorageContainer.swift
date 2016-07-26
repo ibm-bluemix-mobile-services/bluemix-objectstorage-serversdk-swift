@@ -46,7 +46,7 @@ public class ObjectStorageContainer{
 		logger.info("Storing object [\(name)]")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
 		let url = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
-		
+
 		httpClient.put(url: url, headers: headers, data: data) { error, status, headers, responseData in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), object: nil)
@@ -59,7 +59,7 @@ public class ObjectStorageContainer{
 
 	}
 
-	
+
 	/**
 	Retrieve an existing object
 
@@ -70,7 +70,7 @@ public class ObjectStorageContainer{
 		logger.info("Retrieving object [\(name)]")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
 		let url = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
-		
+
 		httpClient.get(url: url, headers: headers) { error, status, headers, data in
 			if let error = error{
 				completionHandler(error: ObjectStorageError.from(httpError: error), object: nil)
@@ -97,10 +97,16 @@ public class ObjectStorageContainer{
 			}else {
 				self.logger.info("Retrieved objects list")
 				var objectsList = [ObjectStorageObject]()
-				let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
-				
+
+				#if os(Linux)
+					let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
+				#else
+					let responseBodyString = String(data: data as! Data, encoding: String.Encoding.utf8)!
+				#endif
+
+
 				let objectNames = responseBodyString.components(separatedBy: "\n")
-				
+
 				for objectName:String in objectNames{
 					if objectName.characters.count == 0 {
 						continue
@@ -126,7 +132,7 @@ public class ObjectStorageContainer{
 		logger.info("Deleting object [\(name)]")
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
 		let url = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + name))
-		
+
 		httpClient.delete(url: url, headers: headers) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error: ObjectStorageError.from(httpError: error))
@@ -154,9 +160,9 @@ public class ObjectStorageContainer{
 	*/
 	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler: (error: ObjectStorageError?)->Void){
 		logger.info("Updating metadata :: \(metadata)")
-		
+
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken, additionalHeaders: metadata)
-		
+
 		httpClient.post(url: self.url, headers: headers, data:nil) { error, status, headers, data in
 			if let error = error {
 				completionHandler(error:ObjectStorageError.from(httpError: error))
@@ -175,7 +181,7 @@ public class ObjectStorageContainer{
 	*/
 	public func retrieveMetadata(completionHandler: (error: ObjectStorageError?, metadata: [String:String]?) -> Void) {
 		logger.info("Retrieving metadata")
-		
+
 		let headers = Utils.createHeaderDictionary(authToken: objectStore.authTokenManager?.authToken)
 		httpClient.head(url: self.url, headers: headers) { error, status, headers, data in
 			if let error = error {
@@ -187,4 +193,3 @@ public class ObjectStorageContainer{
 		}
 	}
 }
-
