@@ -15,35 +15,35 @@ import Foundation
 import SimpleHttpClient
 
 internal protocol HttpClientProtocol{
-	func get(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler)
-	func put(url: Url, headers: [String : String]?, data: NSData?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler)
-	func delete(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler)
-	func post(url: Url, headers: [String : String]?, data: NSData?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler)
-	func head(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler)
+	func get(url: Url, headers: [String : String]?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler)
+	func put(url: Url, headers: [String : String]?, data: Data?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler)
+	func delete(url: Url, headers: [String : String]?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler)
+	func post(url: Url, headers: [String : String]?, data: Data?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler)
+	func head(url: Url, headers: [String : String]?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler)
 }
 
 internal class HttpClient: HttpClientProtocol{
-	func get(url: Url, headers: [String : String]? = nil, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	func get(url: Url, headers: [String : String]? = nil, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let resource = HttpResource(schema: url.schema, host: url.host, port: url.port, path: url.path)
 		SimpleHttpClient.HttpClient.get(resource: resource, headers: headers, completionHandler: completionHandler)
 	}
 	
-	func put(url: Url, headers: [String : String]? = nil, data: NSData? = nil, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	func put(url: Url, headers: [String : String]? = nil, data: Data? = nil, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let resource = HttpResource(schema: url.schema, host: url.host, port: url.port, path: url.path)
 		SimpleHttpClient.HttpClient.put(resource: resource, headers: headers, data: data, completionHandler: completionHandler)
 	}
 	
-	func delete(url: Url, headers: [String : String]? = nil, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	func delete(url: Url, headers: [String : String]? = nil, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let resource = HttpResource(schema: url.schema, host: url.host, port: url.port, path: url.path)
 		SimpleHttpClient.HttpClient.delete(resource: resource, headers: headers, completionHandler: completionHandler)
 	}
 	
-	func post(url: Url, headers: [String : String]? = nil, data: NSData? = nil, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	func post(url: Url, headers: [String : String]? = nil, data: Data? = nil, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let resource = HttpResource(schema: url.schema, host: url.host, port: url.port, path: url.path)
 		SimpleHttpClient.HttpClient.post(resource: resource, headers: headers, data: data, completionHandler: completionHandler)
 	}
 	
-	func head(url: Url, headers: [String : String]? = nil, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	func head(url: Url, headers: [String : String]? = nil, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let resource = HttpResource(schema: url.schema, host: url.host, port: url.port, path: url.path)
 		SimpleHttpClient.HttpClient.head(resource: resource, headers: headers, completionHandler: completionHandler)
 	}

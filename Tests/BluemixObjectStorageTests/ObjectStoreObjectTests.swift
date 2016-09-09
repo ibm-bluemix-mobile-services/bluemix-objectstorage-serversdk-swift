@@ -23,7 +23,7 @@ class ObjectStoreObjectTests: XCTestCase {
 	}
 
 	func testObjectStoreObject(){
-		expecatation = expectation(withDescription: "doneExpectation")
+		expecatation = expectation(description: "doneExpectation")
 		
 		let objStore = ObjectStorage(projectId: Consts.projectId)
 		if Consts.mockServer{
@@ -38,7 +38,7 @@ class ObjectStoreObjectTests: XCTestCase {
 			self.doTestCreateContainer(objStore: objStore)
 		})
 		
-		waitForExpectations(withTimeout: Consts.testTimeout) { (error) in
+		waitForExpectations(timeout: Consts.testTimeout) { (error) in
 			XCTAssertNil(error, "Test timeout")
 		}
 	}
@@ -56,7 +56,7 @@ class ObjectStoreObjectTests: XCTestCase {
 	
 	func doTestStoreBigObject(container: ObjectStorageContainer){
 		let bigData = Consts.bigObjectData
-		print("bigObjectData.length == \(bigData.length)")
+		print("bigObjectData.length == \(bigData.count)")
 		container.storeObject(name: Consts.objectName, data: bigData) { (error, object) in
 			XCTAssertNil(error, "error != nil")
 			XCTAssertNotNil(object, "object == nil")

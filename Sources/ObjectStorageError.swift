@@ -15,7 +15,7 @@ import Foundation
 import SimpleHttpClient
 
 ///	Used to indicate various failure types that might occur during BMSObjectStore operations
-public enum ObjectStorageError: Int, ErrorProtocol {
+public enum ObjectStorageError: Int, Error {
 	/**
 		Indicates a failure during connection attempt. Since response and data is not available in this case an error message might be provided
 

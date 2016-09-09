@@ -53,16 +53,16 @@ public class ObjectStorage {
 	- Parameter password: Password provided by the IBM Object Store. Can be obtained via VCAP_SERVICES, service instance keys or IBM Object Store dashboard.
 	- Parameter region: Defines whether ObjectStore should connect to Dallas or London instance of IBM Object Store. Use *ObjectStore.REGION_DALLAS* and *ObjectStore.REGION_LONDON* as values
 	*/
-	public func connect(userId:String, password:String, region:String, completionHandler:(error: ObjectStorageError?) -> Void) {
+	public func connect(userId:String, password:String, region:String, completionHandler:@escaping (_ error: ObjectStorageError?) -> Void) {
 		self.authTokenManager = AuthTokenManager(projectId: projectId, userId: userId, password: password, httpClient: httpClient)
 
 		authTokenManager?.refreshAuthToken { (error) in
 			if error != nil {
-				completionHandler(error: ObjectStorageError.FailedToRetrieveAuthToken)
+				completionHandler(ObjectStorageError.FailedToRetrieveAuthToken)
 			} else {
 				self.projectUrl = (region == ObjectStorage.REGION_DALLAS) ? ObjectStorage.DALLAS_URL : ObjectStorage.LONDON_URL
 				self.projectUrl = self.projectUrl?.urlByAdding(pathComponent: self.projectId)
-				completionHandler(error: nil)
+				completionHandler(nil)
 			}
 		}
 	}
@@ -73,12 +73,12 @@ public class ObjectStorage {
 	- Parameter name: The name of container to be created
 	- Parameter completionHandler: Closure to be executed once container is created.
 	*/
-	public func createContainer(name:String, completionHandler: (error:ObjectStorageError?, container: ObjectStorageContainer?) -> Void){
+	public func createContainer(name:String, completionHandler: @escaping (_ error:ObjectStorageError?, _ container: ObjectStorageContainer?) -> Void){
 		logger.info("Creating container [\(name)]")
 
 		guard self.projectUrl != nil else{
-			logger.error(String(ObjectStorageError.NotConnected))
-			return completionHandler(error: ObjectStorageError.NotConnected, container: nil)
+			logger.error(String(describing: ObjectStorageError.NotConnected))
+			return completionHandler(ObjectStorageError.NotConnected, nil)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
@@ -86,11 +86,11 @@ public class ObjectStorage {
 
 		httpClient.put(url: url!, headers: headers, data: nil) { error, status, headers, data in
 			if let error = error {
-				completionHandler(error: ObjectStorageError.from(httpError: error), container: nil)
+				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
 				self.logger.info("Created container [\(name)]")
 				let container = ObjectStorageContainer(name: name, url: url!, objectStore: self)
-				completionHandler(error: nil, container: container)
+				completionHandler(nil, container)
 			}
 		}
 	}
@@ -102,12 +102,12 @@ public class ObjectStorage {
 	- Parameter name: The name of container to retrieve
 	- Parameter completionHandler: Closure to be executed once container is retrieved.
 	*/
-	public func retrieveContainer(name:String, completionHandler: (error:ObjectStorageError?, container: ObjectStorageContainer?) -> Void){
+	public func retrieveContainer(name:String, completionHandler: @escaping (_ error:ObjectStorageError?, _ container: ObjectStorageContainer?) -> Void){
 		logger.info("Retrieving container [\(name)]")
 
 		guard self.projectUrl != nil else{
-			logger.error(String(ObjectStorageError.NotConnected))
-			return completionHandler(error: ObjectStorageError.NotConnected, container: nil)
+			logger.error(String(describing: ObjectStorageError.NotConnected))
+			return completionHandler(ObjectStorageError.NotConnected, nil)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
@@ -115,11 +115,11 @@ public class ObjectStorage {
 
 		httpClient.get(url: url!, headers: headers) { error, status, headers, data in
 			if let error = error {
-				completionHandler(error: ObjectStorageError.from(httpError: error), container: nil)
+				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
 				self.logger.info("Retrieved container [\(name)]")
 				let container = ObjectStorageContainer(name: name, url: url!, objectStore: self)
-				completionHandler(error: nil, container: container)
+				completionHandler(nil, container)
 			}
 		}
 	}
@@ -129,28 +129,24 @@ public class ObjectStorage {
 
 	- Parameter completionHandler: Closure to be executed once list of containeds is retrieved.
 	*/
-	public func retrieveContainersList(completionHandler: (error:ObjectStorageError?, containers: [ObjectStorageContainer]?) -> Void){
+	public func retrieveContainersList(completionHandler: @escaping (_ error:ObjectStorageError?, _ containers: [ObjectStorageContainer]?) -> Void){
 		logger.info("Retrieving containers list")
 
 		guard self.projectUrl != nil else{
-			logger.error(String(ObjectStorageError.NotConnected))
-			return completionHandler(error: ObjectStorageError.NotConnected, containers: nil)
+			logger.error(String(describing: ObjectStorageError.NotConnected))
+			return completionHandler(ObjectStorageError.NotConnected, nil)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
 
 		httpClient.get(url: self.projectUrl!, headers: headers) {error, status, headers, data in
 			if let error = error{
-				completionHandler(error: ObjectStorageError.from(httpError: error), containers: nil)
+				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
 				self.logger.info("Retrieved containers list")
 				var containersList = [ObjectStorageContainer]()
 
-				#if os(Linux)
-					let responseBodyString = String(data: data!, encoding: NSUTF8StringEncoding)!
-				#else
-					let responseBodyString = String(data: data as! Data, encoding: String.Encoding.utf8)!
-				#endif
+				let responseBodyString = String(data: data!, encoding: String.Encoding.utf8)!
 
 				let containerNames = responseBodyString.components(separatedBy: "\n")
 
@@ -162,7 +158,7 @@ public class ObjectStorage {
 					let container = ObjectStorageContainer(name: containerName, url: containerUrl!, objectStore: self)
 					containersList.append(container)
 				}
-				completionHandler(error: nil, containers: containersList)
+				completionHandler(nil, containersList)
 			}
 		}
 	}
@@ -173,12 +169,12 @@ public class ObjectStorage {
 	- Parameter name: The name of container to delete
 	- Parameter completionHandler: Closure to be executed once container is deleted.
 	*/
-	public func deleteContainer(name:String, completionHandler: (error:ObjectStorageError?) -> Void){
+	public func deleteContainer(name:String, completionHandler: @escaping (_ error:ObjectStorageError?) -> Void){
 		logger.info("Deleting container [\(name)]")
 
 		guard self.projectUrl != nil else{
-			logger.error(String(ObjectStorageError.NotConnected))
-			return completionHandler(error: ObjectStorageError.NotConnected)
+			logger.error(String(describing: ObjectStorageError.NotConnected))
+			return completionHandler(ObjectStorageError.NotConnected)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
@@ -186,10 +182,10 @@ public class ObjectStorage {
 
 		httpClient.delete(url: url!, headers: headers) { error, status, headers, data in
 			if let error = error {
-				completionHandler(error: ObjectStorageError.from(httpError: error))
+				completionHandler(ObjectStorageError.from(httpError: error))
 			} else {
 				self.logger.info("Deleted container [\(name)]")
-				completionHandler(error: nil)
+				completionHandler(nil)
 			}
 		}
 	}
@@ -201,22 +197,22 @@ public class ObjectStorage {
 	- Parameter metadata: a dictionary of metadata items, e.g. ["X-Account-Meta-Subject":"AmericanHistory"]. It is possible to supply multiple metadata items within same invocation. To delete a particular metadata item set it's value to an empty string, e.g. ["X-Account-Meta-Subject":""]. See Object Storage API v1 for more information about possible metadata items - http://developer.openstack.org/api-ref-objectstorage-v1.html
 	- Parameter completionHandler: Closure to be executed once metadata is updated.
 	*/
-	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler: (error:ObjectStorageError?) -> Void){
+	public func updateMetadata(metadata:Dictionary<String, String>, completionHandler: @escaping (_ error:ObjectStorageError?) -> Void){
 		logger.info("Updating metadata :: \(metadata)")
 
 		guard self.projectUrl != nil else{
-			logger.error(String(ObjectStorageError.NotConnected))
-			return completionHandler(error: ObjectStorageError.NotConnected)
+			logger.error(String(describing: ObjectStorageError.NotConnected))
+			return completionHandler(ObjectStorageError.NotConnected)
 		}
 
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken, additionalHeaders: metadata)
 
 		httpClient.post(url: self.projectUrl!, headers: headers, data: nil) { error, status, headers, data in
 			if let error = error {
-				completionHandler(error:ObjectStorageError.from(httpError: error))
+				completionHandler(ObjectStorageError.from(httpError: error))
 			} else {
 				self.logger.info("Metadata updated :: \(metadata)")
-				completionHandler(error:nil)
+				completionHandler(nil)
 			}
 		}
 
@@ -227,20 +223,20 @@ public class ObjectStorage {
 
 	- Parameter completionHandler: Closure to be executed once metadata is retrieved.
 	*/
-	public func retrieveMetadata(completionHandler: (error: ObjectStorageError?, metadata: [String:String]?) -> Void) {
+	public func retrieveMetadata(completionHandler: @escaping (_ error: ObjectStorageError?, _ metadata: [String:String]?) -> Void) {
 		logger.info("Retrieving metadata")
 
 		guard self.projectUrl != nil else{
-			logger.error(String(ObjectStorageError.NotConnected))
-			return completionHandler(error: ObjectStorageError.NotConnected, metadata: nil)
+			logger.error(String(describing: ObjectStorageError.NotConnected))
+			return completionHandler(ObjectStorageError.NotConnected, nil)
 		}
 		let headers = Utils.createHeaderDictionary(authToken: authTokenManager?.authToken)
 		httpClient.head(url: self.projectUrl!, headers: headers) { error, status, headers, data in
 			if let error = error {
-				completionHandler(error: ObjectStorageError.from(httpError: error), metadata: nil)
+				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
 				self.logger.info("Metadata retrieved :: \(headers)")
-				completionHandler(error: nil, metadata: headers);
+				completionHandler(nil, headers);
 			}
 		}
 	}
