@@ -1,5 +1,5 @@
 import XCTest
-@testable import BluemixObjectStorageTestSuite
+@testable import BluemixObjectStorageTests
 
 XCTMain([
 	testCase(ObjectStoreTests.allTests),

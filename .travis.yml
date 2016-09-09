@@ -4,21 +4,24 @@ os:
 language: generic
 env:
   global:
-  - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-06-20-a
-branches:
-  only:
-    - master
-    - development
+  - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-09-07-a
+
 sudo: required
+
 dist: trusty
+
 osx_image: xcode8
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+
 install:
   - eval "$(cat ./install-swiftenv.sh)"
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       sudo apt-get install -y libcurl4-openssl-dev libblocksruntime-dev libkqueue-dev libpthread-workqueue-dev libbsd-dev;
-      git clone -b experimental/foundation https://github.com/apple/swift-corelibs-libdispatch.git;
       sudo rm /usr/bin/ld && sudo ln -s /usr/bin/ld.gold /usr/bin/ld;
-      cd swift-corelibs-libdispatch && git submodule init && git submodule update && sh ./autogen.sh && ./configure --with-swift-toolchain=/home/travis/.swiftenv/versions/$SWIFT_VERSION/usr --prefix=/home/travis/.swiftenv/versions/$SWIFT_VERSION/usr && make && make install;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew unlink git;
@@ -29,5 +32,5 @@ install:
 script:
   - swift build --clean # clean built artifacts if present
   - swift package fetch # clones all dependencies
-  - swift build -Xcc -fblocks -Xlinker -rpath -Xlinker $(pwd)/.build/debug/ # build project
+  - swift build # build project
   - swift test #run tests

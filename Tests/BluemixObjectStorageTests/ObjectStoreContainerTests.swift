@@ -23,7 +23,7 @@ class ObjectStoreContainerTests: XCTestCase {
 	}
 
 	func testObjectStoreContainer(){
-		expecatation = expectation(withDescription: "doneExpectation")
+		expecatation = expectation(description: "doneExpectation")
 		
 		let objStore = ObjectStorage(projectId: Consts.projectId)
 		if Consts.mockServer{
@@ -38,9 +38,7 @@ class ObjectStoreContainerTests: XCTestCase {
 			self.doTestCreateContainer(objStore: objStore)
 		})
 		
-		waitForExpectations(withTimeout: Consts.testTimeout) { (error) in
-			XCTAssertNil(error, "Test timeout")
-		}
+		waitForExpectations(timeout: Consts.testTimeout, handler: nil)
 	}
 	
 	func doTestCreateContainer(objStore:ObjectStorage){

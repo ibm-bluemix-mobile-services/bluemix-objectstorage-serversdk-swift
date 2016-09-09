@@ -41,11 +41,7 @@ internal class AuthorizationRequestBody {
 //			]
 	}
 
-	func data() -> NSData {
-		#if os(Linux)
-			return body.data(using:NSUTF8StringEncoding)!
-		#else
-			return body.data(using:String.Encoding.utf8)!
-		#endif
+	func data() -> Data {
+		return body.data(using:String.Encoding.utf8)!
 	}
 }

@@ -29,25 +29,16 @@ struct Consts{
 	static let metadataTestValue = "testvalue"
 	static let testTimeout = 30.0
 
-	#if os(Linux)
-		static let objectData = "testdata".data(using: NSUTF8StringEncoding)!
-	#else
-		static let objectData = "testdata".data(using: String.Encoding.utf8)!
-	#endif
+	static let objectData = "testdata".data(using: String.Encoding.utf8)!
 
-
-	static var bigObjectData:NSData {
+	static var bigObjectData:Data {
 		get {
 			var str = "123456789 ";
 			for _ in 1...17 {
 				str += str
 			}
 
-			#if os(Linux)
-				return str.data(using: NSUTF8StringEncoding)!
-			#else
-				return str.data(using: String.Encoding.utf8)!
-			#endif
+			return str.data(using: String.Encoding.utf8)!
 		}
 	}
 }

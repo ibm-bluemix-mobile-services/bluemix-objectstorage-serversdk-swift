@@ -17,45 +17,41 @@ import SimpleHttpClient
 
 public class MockServer_ObjectStorageTests: HttpClientProtocol{
 
-	var storedData:NSData?
+	var storedData:Data?
 
-	func get(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	public func get(url: Url, headers: [String : String]?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let pathComponents = url.path.components(separatedBy: "/")
-
-		#if os(OSX)
-			let NSUTF8StringEncoding = String.Encoding.utf8;
-		#endif
 
 		// Get list of objects in container
 		if (pathComponents.count == 4 && pathComponents[3] == Consts.containerName){
 			let objectsList = Consts.objectName + "\n" + Consts.objectName;
-			completionHandler(error: nil, status: 200, headers: [:], data: objectsList.data(using: NSUTF8StringEncoding))
+			completionHandler(nil, 200, [:], objectsList.data(using: String.Encoding.utf8))
 		}
 		// Get content of a particular object
 		else if (pathComponents.count == 5 && pathComponents[4] == Consts.objectName){
-			completionHandler(error: nil, status: 200, headers: [:], data: self.storedData)
+			completionHandler(nil, 200, [:], self.storedData)
 		}
 		// Get list of containers
 		else {
 			let containersList = Consts.containerName + "\n" + Consts.containerName;
-			completionHandler(error: nil, status: 200, headers: [:], data: containersList.data(using: NSUTF8StringEncoding))
+			completionHandler(nil, 200, [:], containersList.data(using: String.Encoding.utf8))
 		}
 	}
-	func put(url: Url, headers: [String : String]?, data: NSData?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	public func put(url: Url, headers: [String : String]?, data: Data?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		self.storedData = data
-		completionHandler(error: nil, status: 200, headers: [:], data: nil)
+		completionHandler(nil, 200, [:], nil)
 	}
-	func delete(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
-		completionHandler(error: nil, status: 200, headers: [:], data: nil)
+	public func delete(url: Url, headers: [String : String]?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
+		completionHandler(nil, 200, [:], nil)
 	}
-	func post(url: Url, headers: [String : String]?, data: NSData?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	public func post(url: Url, headers: [String : String]?, data: Data?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		if (url.host.contains("identity")){
-			completionHandler(error: nil, status: 200, headers: ["X-Subject-Token":"some-token"], data: nil)
+			completionHandler(nil, 200, ["X-Subject-Token":"some-token"], nil)
 		} else {
-			completionHandler(error: nil, status: 200, headers: [:], data: nil)
+			completionHandler(nil, 200, [:], nil)
 		}
 	}
-	func head(url: Url, headers: [String : String]?, completionHandler: SimpleHttpClient.NetworkRequestCompletionHandler){
+	public func head(url: Url, headers: [String : String]?, completionHandler: @escaping SimpleHttpClient.NetworkRequestCompletionHandler){
 		let responseHeaders:[String:String]
 		if (url.path.contains(Consts.objectName)){
 			responseHeaders = [Consts.objectMetadataTestName:Consts.metadataTestValue]
@@ -64,7 +60,7 @@ public class MockServer_ObjectStorageTests: HttpClientProtocol{
 		} else {
 			responseHeaders = [Consts.accountMetadataTestName:Consts.metadataTestValue]
 		}
-		completionHandler(error: nil, status: 200, headers: responseHeaders, data: nil)
+		completionHandler(nil, 200, responseHeaders, nil)
 	}
 
 }

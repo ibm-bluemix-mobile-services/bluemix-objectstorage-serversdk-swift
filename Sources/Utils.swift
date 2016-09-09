@@ -18,15 +18,12 @@ internal class Utils{
 	internal static let X_AUTH_TOKEN = "X-Auth-Token"
 	
 	static func urlPathEncode(text:String) -> String {
-		#if os(Linux)
-			return text.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet()) as String!
-		#else
-			return text.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed())!
-		#endif
+		return text.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
 	}
-
+	
 	static func createHeaderDictionary(authToken:String?, additionalHeaders:[String:String]? = nil) -> [String:String]{
 		var headers:Dictionary<String, String> = [:]
+		
 		if let authToken = authToken {
 			headers.updateValue(authToken, forKey: X_AUTH_TOKEN)
 		}
@@ -41,9 +38,3 @@ internal class Utils{
 	}
 	
 }
-
-/*
-#if os(Linux)
-#else
-#endif
-*/
