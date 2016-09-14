@@ -4,7 +4,7 @@ os:
 language: generic
 env:
   global:
-  - SWIFT_VERSION=DEVELOPMENT-SNAPSHOT-2016-09-07-a
+  - SWIFT_VERSION=3.0
 
 sudo: required
 
@@ -18,14 +18,10 @@ notifications:
     on_failure: always
 
 install:
-  - eval "$(cat ./install-swiftenv.sh)"
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      eval "$(cat ./install-swiftenv.sh)"
       sudo apt-get install -y libcurl4-openssl-dev libblocksruntime-dev libkqueue-dev libpthread-workqueue-dev libbsd-dev;
       sudo rm /usr/bin/ld && sudo ln -s /usr/bin/ld.gold /usr/bin/ld;
-    fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew unlink git;
-      brew install git;
     fi
   - git --version
 
