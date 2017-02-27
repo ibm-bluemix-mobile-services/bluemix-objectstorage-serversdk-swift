@@ -4,13 +4,13 @@ os:
 language: generic
 env:
   global:
-  - SWIFT_VERSION=3.0.1
+  - SWIFT_VERSION=3.0.2
 
 sudo: required
 
 dist: trusty
 
-osx_image: xcode8
+osx_image: xcode8.2
 
 notifications:
   email:
@@ -23,6 +23,9 @@ install:
       sudo apt-get install -y libcurl4-openssl-dev libblocksruntime-dev libkqueue-dev libpthread-workqueue-dev libbsd-dev;
       sudo rm /usr/bin/ld && sudo ln -s /usr/bin/ld.gold /usr/bin/ld;
     fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      gem install slather;
+    fi
   - git --version
 
 script:
@@ -30,3 +33,12 @@ script:
   - swift package fetch # clones all dependencies
   - swift build # build project
   - swift test #run tests
+
+after_success:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      swift package generate-xcodeproj;
+      slather setup BluemixObjectStorage.xcodeproj;
+      xcodebuild -project BluemixObjectStorage.xcodeproj -scheme BluemixObjectStorage build;
+      xcodebuild -project BluemixObjectStorage.xcodeproj -scheme BluemixObjectStorage -enableCodeCoverage YES test;
+      slather coverage --coveralls --binary-basename BluemixObjectStorage.framework -v;
+    fi
