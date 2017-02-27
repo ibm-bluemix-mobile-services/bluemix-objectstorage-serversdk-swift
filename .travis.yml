@@ -37,7 +37,7 @@ script:
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       swift package generate-xcodeproj;
-      slather setup BluemixObjectStorage.xcodeproj
+      slather setup BluemixObjectStorage.xcodeproj;
       xcodebuild -project BluemixObjectStorage.xcodeproj -scheme BluemixObjectStorage build;
       xcodebuild -project BluemixObjectStorage.xcodeproj -scheme BluemixObjectStorage -enableCodeCoverage YES test;
       slather coverage --coveralls --binary-basename BluemixObjectStorage.framework -v;
