@@ -1,8 +1,11 @@
 # BluemixObjectStorage
 
+Bluemix server SDK for Object Storage in Swift
+
 [![Swift][swift-badge]][swift-url]
 [![Platform][platform-badge]][platform-url]
 [![Build Status](https://travis-ci.org/ibm-bluemix-mobile-services/bluemix-objectstorage-serversdk-swift.svg?branch=master)](https://travis-ci.org/ibm-bluemix-mobile-services/bluemix-objectstorage-serversdk-swift)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8f7f31755ad74990a201ca558b94f37f)](https://www.codacy.com/app/ibm-bluemix-mobile-services/bluemix-objectstorage-serversdk-swift?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ibm-bluemix-mobile-services/bluemix-objectstorage-serversdk-swift&amp;utm_campaign=Badge_Grade)
 
 ## Installation
 
