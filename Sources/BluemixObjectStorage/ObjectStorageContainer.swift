@@ -103,7 +103,7 @@ public class ObjectStorageContainer{
 				let objectNames = responseBodyString.components(separatedBy: "\n")
 
 				for objectName:String in objectNames{
-					if objectName.characters.count == 0 {
+					if objectName.count == 0 {
 						continue
 					}
 					let objectUrl = self.url.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + objectName))
@@ -182,7 +182,7 @@ public class ObjectStorageContainer{
 			if let error = error {
 				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
-				self.logger.info("Metadata retrieved :: \(headers)")
+                self.logger.info("Metadata retrieved :: \(headers ?? [:])")
 				completionHandler(nil, headers);
 			}
 		}

@@ -4,13 +4,13 @@ os:
 language: generic
 env:
   global:
-  - SWIFT_VERSION=3.1.1
+  - SWIFT_VERSION=5.0
 
 sudo: required
 
 dist: trusty
 
-osx_image: xcode8.3
+osx_image: xcode10.3
 
 notifications:
   email:
@@ -29,8 +29,7 @@ install:
   - git --version
 
 script:
-  - swift build --clean # clean built artifacts if present
-  - swift package fetch # clones all dependencies
+  - swift package resolve # clones all dependencies
   - swift build # build project
   - swift test #run tests
 
