@@ -42,7 +42,7 @@ public class ObjectStorage {
 	*/
 	public init(projectId:String){
 		self.projectId = projectId
-		logger = Logger(forName:"ObjectStore [\(self.projectId)]")
+        logger = Logger(forName:"ObjectStore [\(self.projectId ?? "No project ID")]")
 		self.httpClient = HttpClient()
 	}
 
@@ -151,7 +151,7 @@ public class ObjectStorage {
 				let containerNames = responseBodyString.components(separatedBy: "\n")
 
 				for containerName:String in containerNames{
-					if containerName.characters.count == 0 {
+					if containerName.count == 0 {
 						continue
 					}
 					let containerUrl = self.projectUrl?.urlByAdding(pathComponent: Utils.urlPathEncode(text: "/" + containerName))
@@ -235,7 +235,7 @@ public class ObjectStorage {
 			if let error = error {
 				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
-				self.logger.info("Metadata retrieved :: \(headers)")
+                self.logger.info("Metadata retrieved :: \(headers ?? [:])")
 				completionHandler(nil, headers);
 			}
 		}

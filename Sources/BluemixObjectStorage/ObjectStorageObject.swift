@@ -102,7 +102,7 @@ public class ObjectStorageObject{
 			if let error = error {
 				completionHandler(ObjectStorageError.from(httpError: error), nil)
 			} else {
-				self.logger.info("Metadata retrieved :: \(headers)")
+                self.logger.info("Metadata retrieved :: \(headers ?? [:])")
 				completionHandler(nil, headers);
 			}
 		}

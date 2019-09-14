@@ -1,0 +1,70 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SimpleHttpClient",
+        "repositoryURL": "https://github.com/ibm-bluemix-mobile-services/bluemix-simple-http-client-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "e5b6ce424f1ff8bc78eee0fae382ac7f1f8ca843",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "SimpleLogger",
+        "repositoryURL": "https://github.com/ibm-bluemix-mobile-services/bluemix-simple-logger-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "4e3882aebabee30933a23944d48c084bb7c5e31d",
+          "version": "0.6.0"
+        }
+      },
+      {
+        "package": "Socket",
+        "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
+        "state": {
+          "branch": null,
+          "revision": "49cab699e9f151eeb870ab93d14642425e824c19",
+          "version": "1.0.49"
+        }
+      },
+      {
+        "package": "SSLService",
+        "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
+        "state": {
+          "branch": null,
+          "revision": "de36b4d078a12fffba982d17f59d2b7ca587bec9",
+          "version": "1.0.49"
+        }
+      },
+      {
+        "package": "Kitura-net",
+        "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
+        "state": {
+          "branch": null,
+          "revision": "5fc06b21e8e615147fa8341c249ae010a1b41fba",
+          "version": "2.3.0"
+        }
+      },
+      {
+        "package": "LoggerAPI",
+        "repositoryURL": "https://github.com/IBM-Swift/LoggerAPI.git",
+        "state": {
+          "branch": null,
+          "revision": "3357dd9526cdf9436fa63bb792b669e6efdc43da",
+          "version": "1.9.0"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "e8aabbe95db22e064ad42f1a4a9f8982664c70ed",
+          "version": "1.1.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
